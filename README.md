@@ -16,7 +16,7 @@ Este repositório faz parte de uma trilha do curso de informática do IFC de Ara
 
 #
 
-Caso já tenha visto todos esses repositórios e já tenha uma base, você pode escolher ver o tutorial de vue.JS do professor Eduardo da Silva, onde você irá aprender a usar o framework. Caso deseje ir, clique [aqui.]()
+Caso já tenha visto todos esses repositórios e já tenha uma base, você pode escolher ver o tutorial de vue.JS do professor Eduardo da Silva, onde você irá aprender a usar o framework. Caso deseje ir, clique [aqui.](https://eduardo-da-silva.github.io/desenvolvimento-web/)
 
 ### **<u>Esta é a trilha do curso caso tenha einteresse</u>**
 
