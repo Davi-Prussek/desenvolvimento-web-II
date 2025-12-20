@@ -2,7 +2,7 @@
 
 ## ATENÇÂO
 
-#### (2/3) tutorial-livraria:
+### (2/3) tutorial-livraria:
 Este repositório faz parte de um tutorial de vue.JS do professor Eduardo da Silva, caso deseje ver todo tutorial do zero, clique [aqui.](https://eduardo-da-silva.github.io/desenvolvimento-web/)
 
 ## Atividades do tutorial:
