@@ -6,7 +6,7 @@
 
 ## ATENÇÃO:
 
-Este repositório faz parte de uma trilha do curso de informática do IFC de Araquari, então seria interessante ver outros repositórios primeiro, como:
+Este repositório faz parte de uma trilha do curso de informática do IFC de Araquari, então seria interessante ver outros repositórios primeiro para entender este repositório de desenvolvimento web II, como:
 
 - Programação do professor Fábio Longo de Moura, onde você irá ver a lógica de programção usando o JavaScript com listas de exercícios. caso deseje ir, clique [aqui.](https://github.com/ldmfabio/Programacao)
 
@@ -15,6 +15,8 @@ Este repositório faz parte de uma trilha do curso de informática do IFC de Ara
 - O meu próprio repositório de desenvolvimento web I, onde tem todas as atividades que o professor Kennedy Araújo passou durante o ano. Caso deseje ir, clique [aqui.](https://github.com/Davi-Prussek/desenvolvimento-web-I)
 
 #
+
+Caso já tenha visto todos esses repositórios e já tenha uma base, você pode escolher ver o tutorial de vue.JS do professor Eduardo da Silva, onde você irá aprender a usar o framework. Caso deseje ir, clique [aqui.]()
 
 ### **<u>Esta é a trilha do curso caso tenha einteresse</u>**
 
