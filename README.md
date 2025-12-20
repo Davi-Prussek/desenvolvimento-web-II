@@ -14,9 +14,11 @@ Este repositório faz parte de uma trilha do curso de informática do IFC de Ara
 
 - O meu próprio repositório de desenvolvimento web I, onde tem todas as atividades que o professor Kennedy Araújo passou durante o ano. Caso deseje ir, clique [aqui.](https://github.com/Davi-Prussek/desenvolvimento-web-I)
 
-#
+## NOTA:
 
 Caso já tenha visto todos esses repositórios e já tenha uma base, você pode escolher ver o tutorial de vue.JS do professor Eduardo da Silva, onde você irá aprender a usar o framework. Caso deseje ir, clique [aqui.](https://eduardo-da-silva.github.io/desenvolvimento-web/)
+
+#
 
 ### **<u>Esta é a trilha do curso caso tenha einteresse</u>**
 
