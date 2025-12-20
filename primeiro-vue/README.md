@@ -7,7 +7,7 @@ Este repositório faz parte de um tutorial de vue.JS do professor Eduardo da Sil
 
 ## Nota:
 
-### O tutorial da livraria possui as seguintes sessões do tutorial principal:
+### O primeiro-vue possui as seguintes sessões do tutorial principal:
 
 - #### conhecendo o vue.JS
 
