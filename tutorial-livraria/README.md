@@ -9,13 +9,13 @@ Este repositório faz parte de um tutorial de vue.JS do professor Eduardo da Sil
 
 ### O tutorial da livraria possui as seguintes sessões do tutorial principal:
 
-#### tutorial livraria;
+- #### tutorial livraria
 
-#### componentes;
+- #### componentes
 
-#### roteamento;
+- #### roteamento
 
-#### gerenciamento de estados
+- #### gerenciamento de estados
 
 ## Atividades do tutorial:
 
