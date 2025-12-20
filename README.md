@@ -14,6 +14,9 @@ Este repositório faz parte de uma trilha do curso de informática do IFC de Ara
 
 - O meu próprio repositório de desenvolvimento web I, onde tem todas as atividades que o professor Kennedy Araújo passou durante o ano. Caso deseje ir, clique [aqui.](https://github.com/Davi-Prussek/desenvolvimento-web-I)
 
+<!--Espaço para o tutorial do Mateus(careca)-->
+
+<!--Espaço para a biblioteca HTML e CSS(minha)-->
 # 
 
 ## NOTA:
