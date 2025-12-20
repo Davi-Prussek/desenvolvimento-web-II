@@ -5,6 +5,18 @@
 ### (1/3) primeiro-vue:
 Este repositório faz parte de um tutorial de vue.JS do professor Eduardo da Silva, caso deseje ver todo tutorial do zero, clique [aqui.](https://eduardo-da-silva.github.io/desenvolvimento-web/)
 
+## Nota:
+
+### O tutorial da livraria possui as seguintes sessões do tutorial principal:
+
+- #### conhecendo o vue.JS
+
+- #### sintaxe dos templates
+
+- #### reatividade
+
+- #### renderização de listas
+  
 ## Atividades do tutorial:
 
 #### (1/3) primeiro-vue:
