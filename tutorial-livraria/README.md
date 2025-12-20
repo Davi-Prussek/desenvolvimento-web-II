@@ -3,7 +3,19 @@
 ## ATENÇÂO
 
 ### (2/3) tutorial-livraria:
-Este repositório faz parte de um tutorial de vue.JS do professor Eduardo da Silva, caso deseje ver todo tutorial do zero, clique [aqui.](https://eduardo-da-silva.github.io/desenvolvimento-web/)
+Este repositório faz parte de um tutorial de vue.JS do professor Eduardo da Silva, caso deseje ver todo tutorial da livraria, clique [aqui.](https://eduardo-da-silva.github.io/desenvolvimento-web/livraria-tutorial/)
+
+### Nota:
+
+#### O tutorial da livraria possui as seguintes sessões do tutorial principal:
+
+##### tutorial livraria;
+
+##### componentes;
+
+##### roteamento;
+
+##### gerenciamento de estados
 
 ## Atividades do tutorial:
 
