@@ -4,11 +4,11 @@
 
 Este repositório faz parte de uma trilha do curso de informática do IFC de Araquari, então seria interessante ver outros repositórios primeiro, como:
 
--Programação do professor Fábio Longo de Moura, onde você irá ver a lógica de programção usando o JavaScript com listas de exercícios. caso deseje ir, clique[aqui.](https://github.com/ldmfabio/Programacao)
+- Programação do professor Fábio Longo de Moura, onde você irá ver a lógica de programção usando o JavaScript com listas de exercícios. caso deseje ir, clique[aqui.](https://github.com/ldmfabio/Programacao)
 
--O meu próprio de programação onde é uma cópia do repositório do professor Fábio, porém sem as explicações de conceito e somente as listas de exercício resolvidas. Caso deseje ir, clique [aqui.](https://github.com/Davi-Prussek/programacao)
+- O meu próprio de programação onde é uma cópia do repositório do professor Fábio, porém sem as explicações de conceito e somente as listas de exercício resolvidas. Caso deseje ir, clique [aqui.](https://github.com/Davi-Prussek/programacao)
 
--O meu próprio repositório de desenvolvimento web I, onde tem todas as atividades que o professor Kennedy Araújo passou durante o ano. Caso deseje ir, clique [aqui.](https://github.com/Davi-Prussek/desenvolvimento-web-I)
+- O meu próprio repositório de desenvolvimento web I, onde tem todas as atividades que o professor Kennedy Araújo passou durante o ano. Caso deseje ir, clique [aqui.](https://github.com/Davi-Prussek/desenvolvimento-web-I)
 
 #
 
