@@ -1,13 +1,13 @@
 <script setup>
 import cartComponent from '@/components/cartComponent.vue';
-
+import { useCart } from '@/stores/cart'
 import { RouterLink, useRoute } from 'vue-router';
-const route = useRoute();
+import { importBooks } from '@/stores/books';
 
-import { useCart } from '@/composables/useCart'
-const {
-  showCart
-}= useCart()
+const bookStore = importBooks();
+
+const route = useRoute();
+const cartStore = useCart();
 
 </script>
 
@@ -21,7 +21,12 @@ const {
         </RouterLink>
       </h1>
       <div class="search-wrapper">
-        <input type="text" class="search" placeholder="Buscar..." />
+        <input
+          v-model="bookStore.filterText"
+          type="text"
+          class="search"
+          placeholder="Buscar..."
+        />
       </div>
       <ul>
         <li :style="{ backgroundColor: route.path == '/termos' ? '#27ae6099' : '' }">
@@ -34,22 +39,22 @@ const {
           <RouterLink to="/envio" :style="{ color: route.path == '/envio' ? 'white' : '' }">Envio</RouterLink>
         </li>
         <li :style="{ backgroundColor: route.path == '/devolucoes' ? '#27ae6099' : '' }">
-          <RouterLink to="/devolucoes" :style="{ color: route.path == '/devolucoes' ? 'white' : '' }">Devoluções
-          </RouterLink>
+          <RouterLink to="/devolucoes" :style="{ color: route.path == '/devolucoes' ? 'white' : '' }">Devoluções</RouterLink>
         </li>
       </ul>
       <ul class="icons">
-        <li @click="showCart = !showCart"><span class="mdi mdi-cart"></span></li>
+        <li @click="cartStore.showCart = !cartStore.showCart"><span class="mdi mdi-cart"></span></li>
         <li><span class="mdi mdi-heart"></span></li>
         <li><span class="mdi mdi-account"></span></li>
       </ul>
     </nav>
   </header>
-<main v-if="showCart">
-<cartComponent/>
-</main>
-<main v-else/>
+
+  <main v-if="cartStore.showCart">
+    <cartComponent/>
+  </main>
 </template>
+
 <style scoped>
 header {
   nav {

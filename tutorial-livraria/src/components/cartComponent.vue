@@ -1,11 +1,10 @@
 <script setup>
-import { useCart } from '@/composables/useCart';
+import { useCart } from '@/stores/cart';
 const {
   cart,
   incrementBook,
   decrementBook,
   zerarCarrinho,
-  showCart
 } = useCart();
 
 </script>
@@ -48,7 +47,7 @@ const {
         </tr>
       </tbody>
     </table>
-    <button @click="showCart = !showCart" class="outlined">Voltar para loja</button>
+    <button @click="useCart().showCart = !useCart().showCart" class="outlined">Voltar para loja</button>
     <div class="cart-summary">
       <div class="cupom">
         <input type="text" placeholder="Código do cupom" />

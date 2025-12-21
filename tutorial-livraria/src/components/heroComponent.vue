@@ -1,9 +1,12 @@
 <script setup>
-import { importBooks } from '@/composables/books.js'
+import { RouterLink } from 'vue-router';
 
-const { books } = importBooks();
-const showRandom = Math.floor(Math.random() * books.value.length)
-const featuredBook = books.value[showRandom];
+import { importBooks } from '@/stores/books'
+import featuredComponent from './featuredComponent.vue';
+
+const { filteredBooks } = importBooks();
+const showRandom = Math.floor(Math.random() * filteredBooks.length)
+const featuredBook = filteredBooks[showRandom];
 </script>
 
 <template>
@@ -12,12 +15,13 @@ const featuredBook = books.value[showRandom];
       <h3 class="outlined">Livro destaque</h3>
       <h2>{{ featuredBook.title }}</h2>
       <p>{{ featuredBook.description }}</p>
-      <button>Acessar página do livro</button>
+      <button><RouterLink :to="{ name: 'Book', params: { id: featuredBook.id } }">Acessar página do livro</RouterLink></button>
     </div>
     <div class="hero-image">
       <img :src="featuredBook.cover" :alt="featuredBook.alt"/>
     </div>
   </section>
+<featuredComponent/>
 </template>
 <style scoped>
 .hero {
@@ -53,6 +57,10 @@ const featuredBook = books.value[showRandom];
 
      button {
       margin-top: 20px;
+      a {
+        text-decoration: none;
+        color: white;
+      }
     }
 
     p {

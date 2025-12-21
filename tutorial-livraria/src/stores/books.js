@@ -1,5 +1,12 @@
+import { defineStore } from "pinia";
 import { ref } from "vue";
-const books = ref([
+import { computed } from "vue";
+
+export const importBooks = defineStore( "books", () => {
+
+  const filterText = ref("");
+
+const books = [
   {
     id: 1,
     title: 'Comigo na livraria',
@@ -81,7 +88,13 @@ const books = ref([
     author: 'Schmitt, Eric-Emmanuel',
     description: "Noc ognia é um romance de Erich-Emmanuel Schmitt, que narra a históriade um homem que vive em um mundo onde as pessoas não podem mais sonhar. O livro é uma reflexão sobre a importância dos sonhos e da imaginação na vida humana. Erich-Emmanuel Schmitt é um autor francês conhecido por suas obras que exploram temas filosóficos e existenciais. Ele é um dos autores mais traduzidos da França e suas obras têm sido amplamente elogiadas pela crítica."
   }
-]);
-export function importBooks() {
-return {books};
-}
+];
+  function getBookById(id) {
+    return books.find((book) => book.id == id)
+  }
+  const filteredBooks = computed(
+    () =>
+    books.filter((book) => book.title.toLowerCase().includes(filterText.value.toLowerCase()))
+  )
+return { filteredBooks, filterText, getBookById }
+})
