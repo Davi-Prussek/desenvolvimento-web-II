@@ -2,7 +2,7 @@
 
 ## ATENÇÂO
 
-### (3/3) tutorial-livraria:
+### (3/3) tutorial-TMDB:
 Este repositório faz parte de um tutorial de vue.JS do professor Eduardo da Silva, caso deseje ver todo tutorial do TMDB, clique [aqui.](https://eduardo-da-silva.github.io/desenvolvimento-web/tmdb/)
 
 ## Nota:
