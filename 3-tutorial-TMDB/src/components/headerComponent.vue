@@ -8,7 +8,7 @@ const routes = router.getRoutes();
 <template>
   <header>
 <nav>
-  <RouterLink v-for="(rotas, index) in routes.slice(0,3)" :key="index" :to="rotas.path">
+  <RouterLink v-for="(rotas, index) in routes.slice(1,4)" :key="index" :to="rotas.path">
     {{ rotas.name }}
   </RouterLink>
 </nav>

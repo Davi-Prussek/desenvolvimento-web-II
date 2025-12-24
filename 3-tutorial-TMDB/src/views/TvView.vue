@@ -3,9 +3,7 @@ import { ref, onMounted, computed } from 'vue';
 import loading from "vue-loading-overlay";
 import api from '@/plugins/axios';
 import { useGenreStore } from '@/stores/genre';
-import { useGenreDate } from '@/stores/funcionSloth';
 const store = useGenreStore();
-const sloth = useGenreDate();
 const isLoading = ref(false);
 
 const tv = ref([]);
@@ -16,14 +14,15 @@ onMounted(async () => {
   isLoading.value = false;
 });
 
-const listTv = async (genreId) => {
-  isLoading.value = true;
-  const response = await api.get('discover/tv', {
-    params: {
-      with_genres: genreId,
-      language: 'pt-BR'
-    }
-  });
+ const listTv = async (genreId) => {
+    store.setCurrentGenreId(genreId);
+    isLoading.value = true;
+    const response = await api.get('discover/tv', {
+      params: {
+        with_genres: genreId,
+        language: 'pt-BR'
+      }
+    });
   tv.value = response.data.results
   isLoading.value = false;
 };
@@ -43,7 +42,12 @@ const listTv = async (genreId) => {
 
     <h1>Programas de TV</h1>
     <ul class="genre-list">
-      <li v-for="genre in TOC_genre" :key="genre.id" @click="listTv(genre.id)" class="genre-item">
+      <li
+      v-for="genre in TOC_genre"
+      :key="genre.id"
+      @click="listTv(genre.id)"
+      class="genre-item"
+      :class="{ active: genre.id === store.currentGenreId }">
         {{ genre.name }}
       </li>
     </ul>
@@ -53,10 +57,14 @@ const listTv = async (genreId) => {
         <img :src="`https://image.tmdb.org/t/p/w500${programs.poster_path}`" :alt="programs.name" />
         <div class="program-details">
           <p class="program-title">{{ programs.name }}</p>
-          <p class="program-release-date">{{ programs.first_air_date }}</p>
+          <p class="program-release-date">{{ store.formatDate(programs.first_air_date) }}</p>
           <p class="program-genres">
-            <span v-for="genre_id in programs.genre_ids" :key="genre_id" @click="listTv(genre_id)">
-              {{ sloth.getGenreName(genre_id) }}
+            <span
+            v-for="genre_id in programs.genre_ids"
+            :key="genre_id"
+            @click="listTv(genre_id)"
+            :class="{ active: genre_id === store.currentGenreId }">
+              {{ store.getGenreName(genre_id) }}
             </span>
           </p>
         </div>
@@ -76,7 +84,7 @@ const listTv = async (genreId) => {
 }
 
 .genre-item {
-  background-color: #5d6424;
+  background-color: #92a042;
   border-radius: 1rem;
   padding: 0.5rem 1rem;
   color: #fff;
@@ -151,5 +159,13 @@ const listTv = async (genreId) => {
   background-color: #455a08;
   box-shadow: 0 0 0.5rem #748708;
 }
-
+.active {
+  background-color: #bece5f;
+  font-weight: bolder;
+}
+.program-genres span.active {
+  background-color: #bece5f;
+  color: #ffffff;
+  font-weight: bolder;
+}
 </style>

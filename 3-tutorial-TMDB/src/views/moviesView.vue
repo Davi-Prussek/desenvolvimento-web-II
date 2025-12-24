@@ -1,10 +1,9 @@
   <script setup>
   import { ref, onMounted, computed } from 'vue';
+  import router from '@/router';
   import api from '@/plugins/axios';
   import Loading from "vue-loading-overlay";
-  import { useGenreDate } from "@/stores/funcionSloth";
   import { useGenreStore } from "@/stores/genre";
-  const sloth = useGenreDate();
   const store = useGenreStore()
   const isLoading = ref(false);
 
@@ -17,6 +16,7 @@
   });
 
   const listMovies = async (genreId) => {
+    store.setCurrentGenreId(genreId);
     isLoading.value = true;
     const response = await api.get('discover/movie', {
       params: {
@@ -34,24 +34,40 @@
   const TOC_genre = computed(() => {
   return [...store.genres].sort((a, b) => a.name.localeCompare(b.name));});
 
+  const openMovie = (movieId) => {
+  router.push( { name:  "movieDetails", params: {movieId}});
+   }
+listMovies()
 </script>
   <template>
     <h1>Filmes</h1>
     <ul class="genre-list">
-      <li v-for="genre in TOC_genre" :key="genre.id" @click="listMovies(genre.id)" class="genre-item">
+      <li v-for="genre in TOC_genre"
+       :key="genre.id"
+        @click="listMovies(genre.id)"
+         class="genre-item"
+         :class="{ active: genre.id === store.currentGenreId }"
+         >
         {{ genre.name }}
       </li>
     </ul>
     <Loading v-model:active="isLoading" is-full-page />
     <div class="movie-list">
       <div v-for="movie in TOC_movie" :key="movie.id" class="movie-card">
-        <img :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`" :alt="movie.title" />
+        <img
+        :src="`https://image.tmdb.org/t/p/w500${movie.poster_path}`"
+        :alt="movie.title"
+        @click="openMovie(movie.id)"
+        />
         <div class="movie-details">
           <p class="movie-title">{{ movie.title }}</p>
-          <p class="movie-release-date">{{ sloth.formatDate(movie.release_date) }}</p>
+          <p class="movie-release-date">{{ store.formatDate(movie.release_date) }}</p>
           <p class="movie-genres">
-            <span v-for="genre_id in movie.genre_ids" :key="genre_id" @click="listMovies(genre_id)">
-              {{ sloth.getGenreName(genre_id) }}
+            <span v-for="genre_id in movie.genre_ids"
+            :key="genre_id"
+            @click="listMovies(genre_id)"
+            :class="{ active: genre_id === store.currentGenreId }">
+              {{ store.getGenreName(genre_id) }}
             </span>
           </p>
         </div>
@@ -101,6 +117,7 @@
   height: 20rem;
   border-radius: 0.5rem;
   box-shadow: 0 0 0.5rem #000;
+  cursor: pointer;
 }
 
 .movie-details {
@@ -140,5 +157,14 @@
   cursor: pointer;
   background-color: #4e9e5f;
   box-shadow: 0 0 0.5rem #387250;
+}
+.active {
+  background-color: #67b086;
+  font-weight: bolder;
+}
+.movie-genres span.active {
+  background-color: #89e5af;
+  color: #ffffff;
+  font-weight: bolder;
 }
 </style>
