@@ -25,7 +25,7 @@ Caso já tenha visto todos esses repositórios e já tenha uma base, você pode 
 
 #
 
-### **<u>Esta é a trilha do curso caso tenha einteresse</u>**
+### **<u>Esta é a trilha do curso caso tenha interesse</u>**
 
 **[Programação I](https://github.com/ldmfabio/Programacao) :arrow_right: [Professor Fábio Longo de Moura](https://github.com/ldmfabio)**
 
