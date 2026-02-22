@@ -1,12 +1,12 @@
 # Desenvolvimento web II
 
-### Este repositório possui as atividades do tutorial do professor Eduardo da Silva em desenvolviemnto web II.
+### Este repositório possui as atividades sobre vue.JS tanto do professor Eduardo da Silva quanto do professor Fábio Longo de Moura em desenvolviemnto web II.
 
 #
 
 ## ATENÇÃO:
 
-Este repositório faz parte de uma trilha do curso de informática do IFC de Araquari, então seria interessante ver outros repositórios primeiro para entender este repositório de desenvolvimento web II, como:
+Este repositório faz parte de uma trilha do curso de informática do IFC de Araquari, então seria interessante e até essencial ver outros repositórios primeiro para entender este repositório, como:
 
 - Programação do professor Fábio Longo de Moura, onde você irá ver a lógica de programção usando o JavaScript com listas de exercícios. caso deseje ir, clique [aqui.](https://github.com/ldmfabio/Programacao)
 
@@ -14,9 +14,6 @@ Este repositório faz parte de uma trilha do curso de informática do IFC de Ara
 
 - O meu próprio repositório de desenvolvimento web I, onde tem todas as atividades que o professor Kennedy Araújo passou durante o ano. Caso deseje ir, clique [aqui.](https://github.com/Davi-Prussek/desenvolvimento-web-I)
 
-<!--Espaço para o tutorial do Mateus(careca)-->
-
-<!--Espaço para a biblioteca HTML e CSS(minha)-->
 # 
 
 ## NOTA:
@@ -25,13 +22,15 @@ Caso já tenha visto todos esses repositórios e já tenha uma base, você pode 
 
 #
 
-### **<u>Esta é a trilha do curso caso tenha einteresse</u>**
+### **<u>Esta é a trilha do curso caso tenha interesse</u>**
 
 **[Programação I](https://github.com/ldmfabio/Programacao) :arrow_right: [Professor Fábio Longo de Moura](https://github.com/ldmfabio)**
 
 > _Lógica de Programação usando JavaScript_
 
 **[Desenvolvimento Web II](https://eduardo-da-silva.github.io/aula-desenvolvimento-web/) :arrow_right: [Professor: Eduardo da Silva](https://github.com/eduardo-da-silva)**
+
+**[Desenvolvimento Web II](https://github.com/ldmfabio/devwebII) :arrow_right: [Professor: Fábio Longo de Moura](https://github.com/ldmfabio)**
 
 > _Desenvolvimento front-end usando framework Vue_
 
