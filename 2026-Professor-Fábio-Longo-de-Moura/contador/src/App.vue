@@ -114,4 +114,45 @@ background-color: rgb(225, 225, 255);
   padding: 0.2vw;
 }
 }
+@media (max-width: 700px) {
+.principal {
+  text-align: center;
+  .contador {
+font-size: 14vw;
+margin: 0;
+padding: 0;
+}
+.information {
+  display: flex;
+  justify-content: center;
+  gap: 1.1vw;
+  .legenda {
+  margin: 0;
+  padding: 0;
+  font-size: 5vw;
+}
+input {
+  font-size: 5vw;
+}
+}
+.buttons {
+  margin-top: 1.5vw;
+  display: flex;
+  justify-content: space-between;
+button {
+  cursor: pointer;
+  padding: 2vw 3vw;
+  font-size: 6vw;
+  border: none;
+  transition: all 0.1s ease;
+  border-radius: 10px;
+}
+}
+.aviso {
+  font-size: 5vw;
+  height: 7vw;
+  padding: 0.2vw;
+}
+}
+}
 </style>
