@@ -116,16 +116,18 @@ background-color: rgb(225, 225, 255);
 }
 @media (max-width: 700px) {
 .principal {
+
   text-align: center;
   .contador {
 font-size: 14vw;
 margin: 0;
 padding: 0;
+padding-inline: 6vw;
 }
 .information {
   display: flex;
   justify-content: center;
-  gap: 1.1vw;
+  gap: 1vw;
   .legenda {
   margin: 0;
   padding: 0;
