@@ -101,6 +101,10 @@ button:active {
   transform: translateY(4px);
   box-shadow: 0 0 0 rgb(0, 0, 158);
 }
+
+button:disabled {
+background-color: rgb(225, 225, 255);
+}
 }
 .aviso {
   font-size: 1.2vw;
