@@ -6,6 +6,7 @@ const completa_section = ref(false);
 const delete_section = ref(false);
 
 const tarefas = ref([]);
+const tarefasConcluidas = ref([]);
 
 const nome = ref("");
 const desc = ref("");
@@ -16,9 +17,12 @@ const importancia = ref('');
 const aviso = ref("");
 const tempo = 1700;
 const tarefaConcluida = ref(null);
+const tarefaEditada = ref(null);
 // #endregion
 
 // #region function
+
+// #region validações
 //Validação de nome
 function validarNome(nome) {
 
@@ -81,6 +85,7 @@ function validarDatas(dataInicio, dataFinal) {
     return true;
   }
 }
+// #endregion
 
 //Registra a tarefa caso todas as informações passem pela validação, zera as variáveis e fecha a aba de adicionar tarefa
 function registrar() {
@@ -107,6 +112,7 @@ function registrar() {
 
 //Função que conclui a tarefa e tira ela da lista
 function concluirTarefa(tarefa) {
+  tarefasConcluidas.value.push(tarefa);
   completa_section.value = !completa_section.value;
   tarefaConcluida.value = tarefa;
   tarefas.value.splice(tarefas.value.indexOf(tarefa), 1);
@@ -143,7 +149,6 @@ function controleRegistro() {
   dataFinal.value = '';
   importancia.value = '';
   add_section.value = !add_section.value;
-
 }
 
 function dataBonitinha(data) {
@@ -156,23 +161,21 @@ function dataBonitinha(data) {
   });
 }
 
-const cor = ref('');
-
-const brincar = ref([]);
-
-for (let i=1;i<5000;i++) {
-  if (i % 2 == 0) {
-    cor.value = 'vermelho';
-  } else {
-    cor.value = 'vermelho escuro'
-  }
-  brincar.value.push(cor.value);
+function editarTarefa(tarefa) {
+tarefaEditada.value = tarefa;
+add_section.value = !add_section.value;
+nome.value = tarefaEditada.value.nome;
+desc.value = tarefaEditada.value.desc;
+dataInicio.value = tarefaEditada.value.dataInicio;
+dataFinal.value = tarefaEditada.value.dataFinal;
+importancia.value = tarefaEditada.value.importancia;
+tarefas.value.splice(tarefas.value.indexOf(tarefa),1);
 }
 // #endregion
 </script>
 
 <template>
-   <main>
+   <main style="display: flex; justify-content: space-around;">
     <!-- Sessão de confirmação de tarefa -->
     <!-- #region delete_section -->
     <div v-if="delete_section" class="delete">
@@ -232,8 +235,8 @@ for (let i=1;i<5000;i++) {
       lista de tarefas
 
       <!-- Itens da lista de tarefas que serão exibidos na tela fixa -->
-      <ul style="list-style: none;">
-        <li v-for="(tarefa, index) in tarefas" :key="index" style="padding: 1vw;" :style="{border: tarefa.importancia == 'verde' ? '1px solid green' : tarefa.importancia == 'amarelo' ? '1px solid yellow' : tarefa.importancia == 'amarelo' ? '1px solid red' : '1px solid gray'}">
+      <ul style="list-style: none; display: flex; flex-direction: column; gap: 1.5vw;">
+        <li v-for="(tarefa, index) in tarefas" :key="index" style="padding: 1vw;" :style="{border: tarefa.importancia == 'verde' ? '2px solid green' : tarefa.importancia == 'amarelo' ? '2px solid yellow' : tarefa.importancia == 'amarelo' ? '2px solid red' : '2px solid gray'}">
           <div style="display: flex; align-items: center; gap: 2vw;">
             <h2>{{ tarefa.nome }}</h2>
             <div style="display: flex; align-items: center; gap: 0.2vw;">
@@ -246,15 +249,33 @@ for (let i=1;i<5000;i++) {
             <p v-if="tarefa.dataInicio.length !== 0"><strong>data inicial:</strong> {{ dataBonitinha(tarefa.dataInicio) }}</p>
             <p v-if="tarefa.dataFinal.length !== 0"><strong>data final:</strong> {{ tarefa.dataFinal }}</p>
           </div>
-          <div>
-            <button @click="concluirTarefa(tarefa); tarefa.status = 'completa';">Concluir tarefa</button>
-            <button @click="excluirTarefa(tarefa)">Excluir tarefa</button>
+          <div style="display: flex; gap: 1.5vw;">
+            <button @click="concluirTarefa(tarefa); tarefa.status = 'completa';">Concluir Tarefa</button>
+            <button @click="excluirTarefa(tarefa)">Excluir Tarefa</button>
+            <button @click="editarTarefa(tarefa)">Editar Tarefa</button>
           </div>
         </li>
       </ul>
     </div>
     <!-- #endregion -->
-  </main>
+
+    <!-- Conteúdo das listas concluídas -->
+     <!-- #region concluidas -->
+
+    <div :style="{visibility: tarefasConcluidas.length == 0 ? 'hidden' : 'visible'}">
+      <h2>
+        lista de tarefas concluídas:
+        <button @click="tarefasConcluidas = [];">Limpar</button>
+      </h2>
+      <ul style="list-style: none;">
+      <li v-for="(tarefa, index) in tarefasConcluidas" :key="index">
+        <h4><strong>Nome: </strong>{{ tarefa.nome }}</h4>
+        <p>Descrição: {{ tarefa.desc }}</p>
+      </li>
+    </ul>
+    </div>
+    <!-- endregion -->
+</main>
 </template>
 
 <style scoped>
