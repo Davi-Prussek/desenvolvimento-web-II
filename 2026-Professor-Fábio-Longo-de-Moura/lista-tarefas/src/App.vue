@@ -4,31 +4,24 @@ import { ref } from 'vue';
 const add_section = ref(false);
 const completa_section = ref(false);
 const delete_section = ref(false);
-
 const tarefas = ref([]);
 const tarefasConcluidas = ref([]);
-
 const nome = ref("");
 const desc = ref("");
 const dataInicio = ref('');
 const dataFinal = ref('');
 const importancia = ref('');
-
 const aviso = ref("");
 const tempo = 1700;
 const tarefaConcluida = ref(null);
 const tarefaEditada = ref(null);
 // #endregion
-
 // #region function
-
 // #region validações
 //Validação de nome
 function validarNome(nome) {
-
   //Validação de nome vazio
   if (nome.length !== 0) {
-
     //Validação de nome com números
     if (!/[a-zA-Z]/.test(nome)) {
       aviso.value = 'O nome da tarefa deve ter apenas letras'
@@ -49,7 +42,6 @@ function validarNome(nome) {
     return false;
   }
 }
-
 //Validação se a descrição tem até 500 linhas
 function validarDesc(desc) {
   if (desc.length > 500) {
@@ -62,7 +54,6 @@ function validarDesc(desc) {
     return true;
   }
 }
-
 //Validação se a data inicial é maior que a data final
 function validarDatas(dataInicio, dataFinal) {
   if (dataInicio.length !== 0 && dataFinal.length !== 0) {
@@ -71,26 +62,27 @@ function validarDatas(dataInicio, dataFinal) {
       setTimeout(() => {
         aviso.value = '';
       }, tempo);
-      return false;}
-
-    else if (Date.parse(dataInicio) < Date.parse(dataFinal)) {
-      return true;}
+      return false;
     }
-
+    else if (Date.parse(dataInicio) < Date.parse(dataFinal)) {
+      return true;
+    }
+  }
   else if (dataInicio.length !== 0 || dataFinal.length !== 0) {
     return true;
   }
-
   else if (dataInicio.length == 0 && dataFinal.length == 0) {
     return true;
   }
 }
 // #endregion
-
 //Registra a tarefa caso todas as informações passem pela validação, zera as variáveis e fecha a aba de adicionar tarefa
 function registrar() {
-
   if (validarNome(nome.value) && validarDesc(desc.value) && validarDatas(dataInicio.value, dataFinal.value)) {
+    if (tarefaEditada.value) {
+      tarefas.value.splice(tarefas.value.indexOf(tarefaEditada.value), 1);
+      tarefaEditada.value = null;
+    }
     tarefas.value.push(
       {
         nome: nome.value,
@@ -109,7 +101,6 @@ function registrar() {
     add_section.value = !add_section.value;
   }
 }
-
 //Função que conclui a tarefa e tira ela da lista
 function concluirTarefa(tarefa) {
   tarefasConcluidas.value.push(tarefa);
@@ -120,19 +111,16 @@ function concluirTarefa(tarefa) {
     completa_section.value = !completa_section.value;
   }, 1500);
 }
-
 //Função que abre a opção de fonfirmação de apagar a tarefa
 function excluirTarefa(tarefa) {
   tarefaConcluida.value = tarefa;
   delete_section.value = !delete_section.value;
 }
-
 //Função que exclui a tarefa do botão selecionado caso a resposta da confirmação seja sim
 function confirmDelete() {
   tarefas.value.splice(tarefas.value.indexOf(tarefaConcluida.value), 1);
   delete_section.value = !delete_section.value;
 }
-
 function pegarValoresTarefa() {
   return {
     nome: tarefaConcluida.value.nome,
@@ -141,16 +129,15 @@ function pegarValoresTarefa() {
     dataFinal: tarefaConcluida.value.dataFinal,
   }
 }
-
 function controleRegistro() {
   nome.value = '';
   desc.value = '';
   dataInicio.value = '';
   dataFinal.value = '';
   importancia.value = '';
+  tarefaEditada.value = null;
   add_section.value = !add_section.value;
 }
-
 function dataBonitinha(data) {
   return new Date(data).toLocaleString('pt-BR', {
     day: '2-digit',
@@ -160,22 +147,20 @@ function dataBonitinha(data) {
     minute: '2-digit',
   });
 }
-
 function editarTarefa(tarefa) {
-tarefaEditada.value = tarefa;
-add_section.value = !add_section.value;
-nome.value = tarefaEditada.value.nome;
-desc.value = tarefaEditada.value.desc;
-dataInicio.value = tarefaEditada.value.dataInicio;
-dataFinal.value = tarefaEditada.value.dataFinal;
-importancia.value = tarefaEditada.value.importancia;
-tarefas.value.splice(tarefas.value.indexOf(tarefa),1);
+  tarefaEditada.value = tarefa;
+  add_section.value = !add_section.value;
+  nome.value = tarefaEditada.value.nome;
+  desc.value = tarefaEditada.value.desc;
+  dataInicio.value = tarefaEditada.value.dataInicio;
+  dataFinal.value = tarefaEditada.value.dataFinal;
+  importancia.value = tarefaEditada.value.importancia;
 }
 // #endregion
 </script>
 
 <template>
-   <main style="display: flex; justify-content: space-around;">
+  <main style="display: flex; justify-content: space-around;">
     <!-- Sessão de confirmação de tarefa -->
     <!-- #region delete_section -->
     <div v-if="delete_section" class="delete">
@@ -205,7 +190,7 @@ tarefas.value.splice(tarefas.value.indexOf(tarefa),1);
       <button @click="controleRegistro">fechar</button>
       <div>
         <label for="nome">Nome da tarefa:</label> <input id="nome" type="text" v-model="nome"
-        placeholder="Nome da tarefa">
+          placeholder="Nome da tarefa">
         <label for="importância">Prioridade</label>
         <select v-model="importancia" id="importância" name="importância">
           <option disabled value="">importância</option>
@@ -236,17 +221,23 @@ tarefas.value.splice(tarefas.value.indexOf(tarefa),1);
 
       <!-- Itens da lista de tarefas que serão exibidos na tela fixa -->
       <ul style="list-style: none; display: flex; flex-direction: column; gap: 1.5vw;">
-        <li v-for="(tarefa, index) in tarefas" :key="index" style="padding: 1vw;" :style="{border: tarefa.importancia == 'verde' ? '2px solid green' : tarefa.importancia == 'amarelo' ? '2px solid yellow' : tarefa.importancia == 'amarelo' ? '2px solid red' : '2px solid gray'}">
+        <li v-for="(tarefa, index) in tarefas" :key="index" style="padding: 1vw;"
+          :style="{ border: tarefa.importancia == 'verde' ? '2px solid green' : tarefa.importancia == 'amarelo' ? '2px solid yellow' : tarefa.importancia == 'amarelo' ? '2px solid red' : '2px solid gray' }">
           <div style="display: flex; align-items: center; gap: 2vw;">
             <h2>{{ tarefa.nome }}</h2>
             <div style="display: flex; align-items: center; gap: 0.2vw;">
-              <p><strong>importância:</strong> {{ tarefa.importancia == 'verde' ? 'não importante' : tarefa.importancia == 'amarelo' ? 'pouco importante' : tarefa.importancia == 'vermelho' ? 'muito importante' : 'padrão'}}</p>
-              <div style="width: 1.3vw; height: 1.3vw;border-radius: 50%;" :style="{backgroundColor: tarefa.importancia == 'verde' ? 'green' : tarefa.importancia == 'amarelo' ? 'yellow' : tarefa.importancia == 'vermelho' ? 'red' : 'gray'}"></div>
+              <p><strong>importância:</strong> {{ tarefa.importancia == 'verde' ? 'não importante' : tarefa.importancia
+                == 'amarelo' ? 'pouco importante' : tarefa.importancia == 'vermelho' ? 'muito importante' : 'padrão'}}
+              </p>
+              <div style="width: 1.3vw; height: 1.3vw;border-radius: 50%;"
+                :style="{ backgroundColor: tarefa.importancia == 'verde' ? 'green' : tarefa.importancia == 'amarelo' ? 'yellow' : tarefa.importancia == 'vermelho' ? 'red' : 'gray' }">
+              </div>
             </div>
           </div>
           <p>{{ tarefa.desc }}</p>
           <div style="display: flex; gap: 2vw;">
-            <p v-if="tarefa.dataInicio.length !== 0"><strong>data inicial:</strong> {{ dataBonitinha(tarefa.dataInicio) }}</p>
+            <p v-if="tarefa.dataInicio.length !== 0"><strong>data inicial:</strong> {{ dataBonitinha(tarefa.dataInicio)
+              }}</p>
             <p v-if="tarefa.dataFinal.length !== 0"><strong>data final:</strong> {{ tarefa.dataFinal }}</p>
           </div>
           <div style="display: flex; gap: 1.5vw;">
@@ -260,22 +251,22 @@ tarefas.value.splice(tarefas.value.indexOf(tarefa),1);
     <!-- #endregion -->
 
     <!-- Conteúdo das listas concluídas -->
-     <!-- #region concluidas -->
+    <!-- #region concluidas -->
 
-    <div :style="{visibility: tarefasConcluidas.length == 0 ? 'hidden' : 'visible'}">
+    <div :style="{ visibility: tarefasConcluidas.length == 0 ? 'hidden' : 'visible' }">
       <h2>
         lista de tarefas concluídas:
         <button @click="tarefasConcluidas = [];">Limpar</button>
       </h2>
       <ul style="list-style: none;">
-      <li v-for="(tarefa, index) in tarefasConcluidas" :key="index">
-        <h4><strong>Nome: </strong>{{ tarefa.nome }}</h4>
-        <p>Descrição: {{ tarefa.desc }}</p>
-      </li>
-    </ul>
+        <li v-for="(tarefa, index) in tarefasConcluidas" :key="index">
+          <h4><strong>Nome: </strong>{{ tarefa.nome }}</h4>
+          <p>Descrição: {{ tarefa.desc }}</p>
+        </li>
+      </ul>
     </div>
     <!-- endregion -->
-</main>
+  </main>
 </template>
 
 <style scoped>
@@ -293,6 +284,7 @@ main {
   box-shadow: 0px 0px 30px 10px rgba(0, 0, 0, 0.132);
   padding: 2vw 1vw;
   border-radius: 24px;
+
   div button {
     border: none;
     font-size: 1.3vw;
