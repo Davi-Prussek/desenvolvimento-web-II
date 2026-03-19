@@ -247,12 +247,19 @@ function handleClickOutsideDeleteAllComplete(event) {
 function escBonitinho(event) {
   if (event.key === 'Escape' && tarefaEditada.value != null) {
     tarefaEditada.value = null;
+    nome.value = '';
+    desc.value = '';
+    dataInicio.value = '';
+    dataFinal.value = '';
+    importancia.value = '';
+  }
+}
+function zerarForm() {
   nome.value = '';
   desc.value = '';
   dataInicio.value = '';
   dataFinal.value = '';
   importancia.value = '';
-  }
 }
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
@@ -307,21 +314,20 @@ onUnmounted(() => {
     <div class="esquerda">
       <h2 v-if="tarefaEditada == null">Criar tarefa</h2>
       <h2 v-if="tarefaEditada !== null">Editar tarefa</h2>
-      <div class="form" @keypress.enter="registrar">
-        <div>
-          <label for="nome">Nome da tarefa:</label> <input id="nome" type="text" v-model="nome"
-            placeholder="Nome da tarefa">
-          <label for="importância">Prioridade</label>
+      <div class="form" @keypress.enter="registrar" @keydown.esc="zerarForm">
+          <div><label for="nome">Nome da tarefa:</label> <input id="nome" type="text" v-model="nome" placeholder="Nome da tarefa"></div>
+          <div>
+            <label for="importância">Prioridade: </label>
           <select v-model="importancia" id="importância" name="importância">
             <option disabled value="">importância</option>
             <option value="Baixa">não importante</option>
             <option value="Média">pouco importante</option>
             <option value="Alta">muito importante</option>
           </select>
-        </div>
-        <label for="desc">Descrição da tarefa:</label> <input id="desc" type="text" v-model="desc"
-          placeholder="Descrição da tarefa">
-        <div>
+          </div>
+        <label for="desc">Descrição da tarefa:</label> <textarea id="desc" type="text" v-model="desc"
+          placeholder="Descrição da tarefa"></textarea>
+        <div class="dateForm">
           <label for="data_inicio">Data de início:</label> <input id="data_inicio" type="datetime-local"
             v-model="dataInicio">
           <label for="Data_final">Data final:</label> <input id="Data_final" type="datetime-local" v-model="dataFinal">
@@ -361,9 +367,10 @@ onUnmounted(() => {
             <div class="datas">
               <p v-if="tarefa.dataInicio.length !== 0" class="dataInicio"><strong></strong> {{
                 dataBonitinha(tarefa.dataInicio)
-              }}</p>
-              <p v-else  class="dataInicio">Sem data inicial</p>
-              <p v-if="tarefa.dataFinal.length !== 0" class="dataFinal"><strong></strong> {{ dataBonitinha(tarefadataFinal) }}</p>
+                }}</p>
+              <p v-else class="dataInicio">Sem data inicial</p>
+              <p v-if="tarefa.dataFinal.length !== 0" class="dataFinal"><strong></strong> {{
+                dataBonitinha(tarefa.dataFinal) }}</p>
               <p v-else class="dataFinal">Sem data final</p>
             </div>
             <div>
@@ -373,7 +380,7 @@ onUnmounted(() => {
           </li>
         </ul>
         <p v-else-if="tarefas.length == 0 && !tarefaEditada" class="vazio">Não há tarefas registradas no momento</p>
-        <p v-else class="vazio">Saia do modo de edição caso deseje voltar a ver suas tarefas</p>
+        <p v-else class="vazio">Saia do modo de edição caso deseje voltar a ver suas tarefas(Esc).</p>
       </div>
     </div>
 
@@ -387,22 +394,26 @@ onUnmounted(() => {
         <li v-for="(tarefa, index) in tarefasConcluidas" :key="index">
           <div class="principalConcluida">
             <h4>{{ tarefa.nome }}</h4>
-          <p>importncia: <span :style="{ backgroundColor: tarefa.importancia == 'Baixa' ? '#015201' : tarefa.importancia == 'Média' ? '#6d6d00' : tarefa.importancia == 'Alta' ? '#430000' : '#434343', color: tarefa.importancia == 'Baixa' ? '#01bb01' : tarefa.importancia == 'Média' ? '#ffff2b' : tarefa.importancia == 'Alta' ? 'red' : '#919191' }">{{ tarefa.importancia }}</span></p>
+            <p>importncia: <span
+                :style="{ backgroundColor: tarefa.importancia == 'Baixa' ? '#015201' : tarefa.importancia == 'Média' ? '#6d6d00' : tarefa.importancia == 'Alta' ? '#430000' : '#434343', color: tarefa.importancia == 'Baixa' ? '#01bb01' : tarefa.importancia == 'Média' ? '#ffff2b' : tarefa.importancia == 'Alta' ? 'red' : '#919191' }">{{
+                  tarefa.importancia }}</span></p>
           </div>
           <p v-if="tarefa.desc.length !== 0">{{ tarefa.desc }}</p>
           <p v-else>Essa tarefa não tem descrição</p>
           <div class="datas">
-              <p v-if="tarefa.dataInicio.length !== 0" class="dataInicio">Data final:<br> {{
-                dataBonitinha(tarefa.dataInicio)
+            <p v-if="tarefa.dataInicio.length !== 0" class="dataInicio">Data final:<br> {{
+              dataBonitinha(tarefa.dataInicio)
+            }}</p>
+            <p v-else class="dataInicio">Sem data inicial</p>
+            <p v-if="tarefa.dataFinal.length !== 0" class="dataFinal">Data final:<br> {{ dataBonitinha(tarefa.dataFinal)
               }}</p>
-              <p v-else  class="dataInicio">Sem data inicial</p>
-              <p v-if="tarefa.dataFinal.length !== 0" class="dataFinal">Data final:<br> {{ dataBonitinha(tarefa.dataFinal) }}</p>
-              <p v-else class="dataFinal">Sem data final</p>
-            </div>
+            <p v-else class="dataFinal">Sem data final</p>
+          </div>
         </li>
       </ul>
-      <p v-else-if="tarefasConcluidas.length == 0 && tarefaEditada == null" class="vazio">Não há tarefas concluídas registradas no momento</p>
-      <p v-else class="vazio">Saia do modo de edição caso deseje voltar a ver suas tarefas concluídas</p>
+      <p v-else-if="tarefasConcluidas.length == 0 && tarefaEditada == null" class="vazio">Não há tarefas concluídas
+        registradas no momento</p>
+      <p v-else class="vazio">Saia do modo de edição caso deseje voltar a ver suas tarefas concluídas(Esc).</p>
     </div>
   </main>
 </template>
@@ -422,8 +433,65 @@ main {
   }
 
   .esquerda {
+    max-width: flex 1;
     box-shadow: 5px 0px 10px 10px rgba(12, 12, 12, 0.187);
     border-right: 0.5px solid rgb(41, 41, 41);
+    text-align: center;
+    padding-inline: 2vw;
+    .form {
+      text-align: left;
+      max-width: fit-content;
+      border-radius: 24px;
+      padding: 2vw 2vw;
+      box-shadow: 0px 0px 30px 10px rgba(0, 0, 0, 0.132);
+      display: flex;
+      flex-direction: column;
+      gap: 1.5vw;
+      background-color: black;
+      color: white;
+      position: relative;
+
+      label {
+        font-size: 1.5vw;
+        width: fit-content;
+      }
+
+      input,select,textarea {
+        border: none;
+        border-radius: 12px;
+        padding: 0.4vw 0.5vw;
+        font-size: 1vw;
+        background-color: rgb(37, 37, 37);
+        color: white;
+      }
+      textarea {
+        resize: none;
+        height: 8vh;
+      }
+
+      input#desc {
+        height: 20vh;
+
+      }
+
+      button {
+        background-color: gray;
+      }
+
+      #desc {
+        padding: 1vw 0.5vw;
+      }
+      .dateForm {
+        display: flex;
+        flex-direction: column;
+        gap: 1vw;
+      }
+    }
+
+    h2 {
+      font-size: 2vw;
+      margin: 2vw;
+    }
   }
 
   .meio {
@@ -586,7 +654,8 @@ main {
           color: rgb(154, 154, 154);
           font-size: 1.2vw;
         }
-      .datas {
+
+        .datas {
           display: flex;
           justify-content: space-between;
           border-top: 0.5px solid white;
@@ -594,6 +663,7 @@ main {
           margin-top: 1vw;
           margin-bottom: 2vw;
           font-size: 1.3vw;
+
           .dataInicio {
             text-align: center;
             background-color: rgb(85, 85, 85);
@@ -601,6 +671,7 @@ main {
             padding: 0.7vw;
             border-radius: 24px;
           }
+
           .dataFinal {
             text-align: center;
             background-color: rgb(85, 85, 85);
@@ -705,19 +776,22 @@ main {
         display: flex;
         justify-content: space-between;
         align-items: center;
-      h4 {
-        font-size: 2vw;
-        word-wrap: break-word;
 
+        h4 {
+          font-size: 2vw;
+          word-wrap: break-word;
+
+        }
+
+        p {
+          width: fit-content;
+
+          span {
+            border-radius: 12px;
+            padding: 0.3vw 0.6vw;
+          }
+        }
       }
-      p {
-        width: fit-content;
-        span {
-              border-radius: 12px;
-              padding: 0.3vw 0.6vw;
-            }
-      }
-    }
 
       p {
         text-align: left;
@@ -726,55 +800,33 @@ main {
         color: rgb(154, 154, 154);
         font-size: 1.2vw;
       }
+
       .datas {
-          display: flex;
-          justify-content: space-between;
-          border-top: 0.5px solid white;
-          padding-top: 1vw;
-          margin-top: 1vw;
-          margin-bottom: 2vw;
-          font-size: 1.3vw;
-          .dataInicio {
-            text-align: center;
-            background-color: rgb(85, 85, 85);
-            color: white;
-            padding: 0.7vw;
-            border-radius: 24px;
-          }
-          .dataFinal {
-            text-align: center;
-            background-color: rgb(85, 85, 85);
-            color: white;
-            padding: 0.7vw;
-            border-radius: 24px;
-          }
+        display: flex;
+        justify-content: space-between;
+        border-top: 0.5px solid white;
+        padding-top: 1vw;
+        margin-top: 1vw;
+        margin-bottom: 2vw;
+        font-size: 1.3vw;
+
+        .dataInicio {
+          text-align: center;
+          background-color: rgb(85, 85, 85);
+          color: white;
+          padding: 0.7vw;
+          border-radius: 24px;
         }
+
+        .dataFinal {
+          text-align: center;
+          background-color: rgb(85, 85, 85);
+          color: white;
+          padding: 0.7vw;
+          border-radius: 24px;
+        }
+      }
     }
-  }
-}
-
-.form {
-  border-radius: 24px;
-  padding: 3vw 2vw;
-  box-shadow: 0px 0px 30px 10px rgba(0, 0, 0, 0.132);
-  width: min-content;
-  display: flex;
-  flex-direction: column;
-  background-color: black;
-  color: white;
-  position: relative;
-
-  input {
-    background-color: rgb(37, 37, 37);
-    color: white;
-  }
-
-  button {
-    background-color: gray;
-  }
-
-  #desc {
-    padding: 1vw 0.5vw;
   }
 }
 
