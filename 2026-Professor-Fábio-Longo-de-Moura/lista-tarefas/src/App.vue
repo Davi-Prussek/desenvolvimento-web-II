@@ -1,8 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
 import { faTrash, faPencil, faCheck, faEllipsis } from '@fortawesome/free-solid-svg-icons';
-
-
 const menu = ref(true)
 const menuRef = ref(null)
 const add_section = ref(false);
@@ -62,7 +60,7 @@ const dataInicio = ref('');
 const dataFinal = ref('');
 const importancia = ref('');
 const aviso = ref("");
-const tempo = 1700;
+const tempo = 2600;
 const tarefaConcluida = ref(null);
 const tarefaEditada = ref(null);
 
@@ -315,16 +313,17 @@ onUnmounted(() => {
       <h2 v-if="tarefaEditada == null">Criar tarefa</h2>
       <h2 v-if="tarefaEditada !== null">Editar tarefa</h2>
       <div class="form" @keypress.enter="registrar" @keydown.esc="zerarForm">
-          <div><label for="nome">Nome da tarefa:</label> <input id="nome" type="text" v-model="nome" placeholder="Nome da tarefa"></div>
-          <div>
-            <label for="importância">Prioridade: </label>
+        <div><label for="nome">Nome da tarefa:</label> <input id="nome" type="text" v-model="nome"
+            placeholder="Nome da tarefa"></div>
+        <div>
+          <label for="importância">Prioridade: </label>
           <select v-model="importancia" id="importância" name="importância">
             <option disabled value="">importância</option>
             <option value="Baixa">não importante</option>
             <option value="Média">pouco importante</option>
             <option value="Alta">muito importante</option>
           </select>
-          </div>
+        </div>
         <label for="desc">Descrição da tarefa:</label> <textarea id="desc" type="text" v-model="desc"
           placeholder="Descrição da tarefa"></textarea>
         <div class="dateForm">
@@ -333,7 +332,6 @@ onUnmounted(() => {
           <label for="Data_final">Data final:</label> <input id="Data_final" type="datetime-local" v-model="dataFinal">
         </div>
         <button @click="registrar">Registrar tarefa</button>
-        <p>Teste: {{ aviso }}</p>
       </div>
     </div>
 
@@ -367,7 +365,7 @@ onUnmounted(() => {
             <div class="datas">
               <p v-if="tarefa.dataInicio.length !== 0" class="dataInicio"><strong></strong> {{
                 dataBonitinha(tarefa.dataInicio)
-                }}</p>
+              }}</p>
               <p v-else class="dataInicio">Sem data inicial</p>
               <p v-if="tarefa.dataFinal.length !== 0" class="dataFinal"><strong></strong> {{
                 dataBonitinha(tarefa.dataFinal) }}</p>
@@ -403,10 +401,10 @@ onUnmounted(() => {
           <div class="datas">
             <p v-if="tarefa.dataInicio.length !== 0" class="dataInicio">Data final:<br> {{
               dataBonitinha(tarefa.dataInicio)
-            }}</p>
+              }}</p>
             <p v-else class="dataInicio">Sem data inicial</p>
             <p v-if="tarefa.dataFinal.length !== 0" class="dataFinal">Data final:<br> {{ dataBonitinha(tarefa.dataFinal)
-              }}</p>
+            }}</p>
             <p v-else class="dataFinal">Sem data final</p>
           </div>
         </li>
@@ -414,6 +412,10 @@ onUnmounted(() => {
       <p v-else-if="tarefasConcluidas.length == 0 && tarefaEditada == null" class="vazio">Não há tarefas concluídas
         registradas no momento</p>
       <p v-else class="vazio">Saia do modo de edição caso deseje voltar a ver suas tarefas concluídas(Esc).</p>
+    </div>
+    <div v-if="aviso" class="aviso">
+      <h2>ERRO NO PREENCHIMENTO DO FORMULÁRIO DA TAREFA: </h2>
+      <p> {{ aviso }}</p>
     </div>
   </main>
 </template>
@@ -431,13 +433,38 @@ main {
   .direita {
     flex: 1;
   }
+.aviso {
+  text-align: center;
+  width: 70vh;
+  font-size: 1.3vw;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0px 0px 30px 10px rgba(21, 21, 21, 0.717);
+  padding: 2vw 2vw;
+  border-radius: 24px;
+  background-color: rgb(18, 18, 18);
+  z-index: 10;
+  h2 {
+    padding-bottom: 1vw;
+    margin-bottom: 1vw;
+    border-bottom: 0.5px solid white;
+  }
+        p {
+        font-size: 1.2vw;
+      }
+}
 
   .esquerda {
     max-width: flex 1;
     box-shadow: 5px 0px 10px 10px rgba(12, 12, 12, 0.187);
     border-right: 0.5px solid rgb(41, 41, 41);
     text-align: center;
-    padding-inline: 2vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
     .form {
       text-align: left;
       max-width: fit-content;
@@ -447,7 +474,8 @@ main {
       display: flex;
       flex-direction: column;
       gap: 1.5vw;
-      background-color: black;
+      border: 1px solid rgb(41, 41, 41);
+      background-color: rgb(23, 23, 23);
       color: white;
       position: relative;
 
@@ -456,7 +484,9 @@ main {
         width: fit-content;
       }
 
-      input,select,textarea {
+      input,
+      select,
+      textarea {
         border: none;
         border-radius: 12px;
         padding: 0.4vw 0.5vw;
@@ -464,6 +494,7 @@ main {
         background-color: rgb(37, 37, 37);
         color: white;
       }
+
       textarea {
         resize: none;
         height: 8vh;
@@ -481,10 +512,29 @@ main {
       #desc {
         padding: 1vw 0.5vw;
       }
+
       .dateForm {
         display: flex;
         flex-direction: column;
         gap: 1vw;
+      }
+
+      button {
+        background-color: rgb(0, 71, 13);
+        border: none;
+        color: white;
+        font-size: 1.1vw;
+        padding: 0.5vw 0.8vw;
+        border-radius: 14px;
+        display: flex;
+        justify-content: center;
+        transition: 0.1s ease all;
+        align-items: center;
+      }
+
+      button:hover {
+        cursor: pointer;
+        background-color: rgb(0, 41, 7);
       }
     }
 
