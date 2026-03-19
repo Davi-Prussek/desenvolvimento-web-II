@@ -1,56 +1,61 @@
 <script setup>
-import { ref,onMounted,onUnmounted } from 'vue';
-import { faTrash,faPencil,faCheck,faEllipsis } from '@fortawesome/free-solid-svg-icons';
+import { ref, onMounted, onUnmounted } from 'vue';
+import { faTrash, faPencil, faCheck, faEllipsis } from '@fortawesome/free-solid-svg-icons';
 
-/*
-Tabela de cores = [
 
-Cores_escuras = {
-color: #1f0000,
-color: #015201,
-color: #6d6d00}
-
-Cores_claras = {
-color: red,
-color: #01bb01,
-color: #ffff2b}
-]
-*/
-
-// #region variáveis principais
 const menu = ref(true)
 const menuRef = ref(null)
 const add_section = ref(false);
 const completa_section = ref(false);
 const delete_section = ref(false);
 const deleteAll_section = ref(false);
-const tarefas = ref([
-  {
-    nome: 'Testando',
-    desc: '"a tecnologia transformou profundamente a maneira como vivemos, trabalhamos e nos comunicamos. no centro dessa revolução, a inteligência artificial e a conectividade constante oferecem soluções rápidas para desafios complexos, otimizando o tempo e abrindo novas possibilidades de aprendizado."',
-    dataInicio: '',
-    dataFinal: '',
-    status: 'incompleta',
-    importancia: 'Baixa'
-  },
-  {
-    nome: 'Teste 2',
-    desc: 'testando 2',
-    dataInicio: '',
-    dataFinal: '',
-    status: 'incompleta',
-    importancia: 'Média'
-  },
-  {
-    nome: 'Teste 3',
-    desc: 'testando 3',
-    dataInicio: '',
-    dataFinal: '',
-    status: 'incompleta',
-    importancia: 'Alta'
+const delCom_section = ref(false);
+class tarefa {
+  constructor(nome, desc, dataInicio, dataFinal, status, importancia) {
+    this.nome = LMP(nome.trim());
+    this.desc = desc || 'Sem descrição';
+    this.dataInicio = dataInicio;
+    this.dataFinal = dataFinal;
+    this.status = 'incompleta';
+    this.importancia = importancia || 'padrão';
   }
+}
+const tarefas = ref([
+  new tarefa('Teste 1',
+    '"a tecnologia transformou profundamente a maneira como vivemos, trabalhamos e nos comunicamos. no centro dessa revolução, a inteligência artificial e a conectividade constante oferecem soluções rápidas para desafios complexos, otimizando o tempo e abrindo novas possibilidades de aprendizado."',
+    '1111-11-11T11:11',
+    '1212-12-12T12:12',
+    'incompleta',
+    'Baixa'
+  ),
+  new tarefa(
+    'Teste 2',
+    'testando 2',
+    '',
+    '',
+    'incompleta',
+    'Média'
+  ),
+  new tarefa(
+    'Teste 3',
+    'testando 3',
+    '',
+    '',
+    'incompleta',
+    'Alta'
+  )
 ]);
 const tarefasConcluidas = ref([]);
+
+for (let i = 1; i < 11; i++) {
+  tarefasConcluidas.value.push(new tarefa(`Teste ${i}`,
+    `testando ${i}`,
+    '',
+    '',
+    'incompleta',
+    'Baixa'
+  ))
+}
 const nome = ref("");
 const desc = ref("");
 const dataInicio = ref('');
@@ -60,10 +65,7 @@ const aviso = ref("");
 const tempo = 1700;
 const tarefaConcluida = ref(null);
 const tarefaEditada = ref(null);
-// #endregion
-// #region function
 
-//Controla os (...) das opções
 function abrirConfig(tarefa) {
   if (menu.value === tarefa) {
     menu.value = null
@@ -71,12 +73,9 @@ function abrirConfig(tarefa) {
     menu.value = tarefa
   }
 }
-
-//Função que deixa a primeira letra do nome da tarefa em maiúsculo
-function LMP(nome) { return nome.charAt(0).toUpperCase() + nome.toLowerCase().substring(1) };
-
-// #region validações
-//Validação de nome
+function LMP(nome) {
+  return nome.charAt(0).toUpperCase() + nome.toLowerCase().substring(1)
+}
 function validarNome(nome) {
   //Validação de nome vazio
   if (nome.length !== 0) {
@@ -108,7 +107,6 @@ function validarNome(nome) {
     return false;
   }
 }
-//Validação se a descrição tem até 500 linhas
 function validarDesc(desc) {
   if (desc.length > 500) {
     aviso.value = 'A descrição da tarefa deve ter até 500 carácteres'
@@ -120,7 +118,6 @@ function validarDesc(desc) {
     return true;
   }
 }
-//Validação se a data inicial é maior que a data final
 function validarDatas(dataInicio, dataFinal) {
   if (dataInicio.length !== 0 && dataFinal.length !== 0) {
     if (Date.parse(dataInicio) >= Date.parse(dataFinal)) {
@@ -141,35 +138,19 @@ function validarDatas(dataInicio, dataFinal) {
     return true;
   }
 }
-// #endregion
-//Registra a tarefa caso todas as informações passem pela validação, zera as variáveis e fecha a aba de adicionar tarefa
 function registrar() {
   if (validarNome(nome.value) && validarDesc(desc.value) && validarDatas(dataInicio.value, dataFinal.value)) {
     if (tarefaEditada.value) {
       tarefas.value.splice(tarefas.value.indexOf(tarefaEditada.value), 1);
       tarefaEditada.value = null;
     }
-    tarefas.value.unshift(
-      {
-        nome: LMP(nome.value),
-        desc: LMP(desc.value),
-        dataInicio: dataInicio.value,
-        dataFinal: dataFinal.value,
-        status: 'incompleta',
-        importancia: importancia.value == '' ? 'padrão' : importancia.value
-      }
-    );
-    nome.value = '';
-    desc.value = '';
-    dataInicio.value = '';
-    dataFinal.value = '';
-    importancia.value = '';
+    tarefas.value.unshift(new tarefa(LMP(nome.value), LMP(desc.value), dataInicio.value, dataFinal.value, 'incompleta', importancia.value));
+    [nome.value, desc.value, dataInicio.value, dataFinal.value, importancia.value] = ['', '', '', '', ''];
     add_section.value = !add_section.value;
   }
 }
-//Função que conclui a tarefa e tira ela da lista
 function concluirTarefa(tarefa) {
-  tarefasConcluidas.value.push(tarefa);
+  tarefasConcluidas.value.unshift(tarefa);
   completa_section.value = !completa_section.value;
   tarefaConcluida.value = tarefa;
   tarefas.value.splice(tarefas.value.indexOf(tarefa), 1);
@@ -177,12 +158,10 @@ function concluirTarefa(tarefa) {
     completa_section.value = !completa_section.value;
   }, 1500);
 }
-//Função que abre a opção de fonfirmação de apagar a tarefa
 function excluirTarefa(tarefa) {
   tarefaConcluida.value = tarefa;
   delete_section.value = !delete_section.value;
 }
-//Função que exclui a tarefa do botão selecionado caso a resposta da confirmação seja sim
 function confirmDelete() {
   tarefas.value.splice(tarefas.value.indexOf(tarefaConcluida.value), 1);
   delete_section.value = !delete_section.value;
@@ -193,10 +172,30 @@ function pegarValoresTarefa() {
     desc: tarefaConcluida.value.desc,
     dataInicio: tarefaConcluida.value.dataInicio,
     dataFinal: tarefaConcluida.value.dataFinal,
+    importancia: tarefaConcluida.value.importancia
   }
 }
+function converterDataBR(data) {
+  if (!data) return '';
+
+  const [dia, mes, anoHora] = data.split('/');
+  const [ano, hora] = anoHora.split(' ');
+
+  return `${ano}-${mes}-${dia}T${hora}`;
+}
 function dataBonitinha(data) {
-  return new Date(data).toLocaleString('pt-BR', {
+  if (!data) return 'Sem data';
+
+  // se vier no formato BR
+  if (data.includes('/')) {
+    data = converterDataBR(data);
+  }
+
+  const d = new Date(data);
+
+  if (isNaN(d)) return 'Data inválida';
+
+  return d.toLocaleString('pt-BR', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
@@ -226,30 +225,66 @@ function handleClickOutsideDelete(event) {
   const clicouNoDelete = event.target.closest('.limparPrincipal')
 
   if (!clicouNoBotao && !clicouNoDelete) {
-    add_section.value = null
+    delete_section.value = false;
   }
 }
+function handleClickOutsideDeleteAll(event) {
+  const clicouNoBotao = event.target.closest('.limparPrincipal')
+  const clicouNoDeleteAll = event.target.closest('.deleteAll')
 
+  if (!clicouNoBotao && !clicouNoDeleteAll) {
+    deleteAll_section.value = false;
+  }
+}
+function handleClickOutsideDeleteAllComplete(event) {
+  const clicouNoBotao = event.target.closest('.limparConcluidas')
+  const clicouNoDeleteAll = event.target.closest('.deleteAllComplete')
+
+  if (!clicouNoBotao && !clicouNoDeleteAll) {
+    delCom_section.value = false;
+  }
+}
+function escBonitinho(event) {
+  if (event.key === 'Escape' && tarefaEditada.value != null) {
+    tarefaEditada.value = null;
+  nome.value = '';
+  desc.value = '';
+  dataInicio.value = '';
+  dataFinal.value = '';
+  importancia.value = '';
+  }
+}
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
   document.addEventListener('click', handleClickOutsideDelete)
+  document.addEventListener('click', handleClickOutsideDeleteAll)
+  document.addEventListener('click', handleClickOutsideDeleteAllComplete)
+  document.addEventListener('keydown', escBonitinho)
 })
-
 onUnmounted(() => {
   document.removeEventListener('click', handleClickOutside)
   document.removeEventListener('click', handleClickOutsideDelete)
+  document.removeEventListener('click', handleClickOutsideDeleteAll)
+  document.removeEventListener('click', handleClickOutsideDeleteAllComplete)
+  document.addEventListener('keydown', escBonitinho)
 })
-// #endregion
 </script>
-
 <template>
   <main style="display: flex; justify-content: space-around;">
+
+    <div class="deleteAllComplete" v-if="delCom_section">
+      <p>Deseja mesmo limpar todas as tarefas concluídas?</p>
+      <div>
+        <button @click="tarefasConcluidas = []; delCom_section = !delCom_section" class="simComplete">Sim</button>
+        <button @click="delCom_section = !delCom_section" class="naoComplete">Não</button>
+      </div>
+    </div>
 
     <div class="deleteAll" v-if="deleteAll_section">
       <p>Deseja mesmo limpar todas as tarefas registradas?</p>
       <div>
-        <button @click="tarefas = []; deleteAll_section = !deleteAll_section">Sim</button>
-        <button @click="deleteAll_section = !deleteAll_section">Não</button>
+        <button @click="tarefas = []; deleteAll_section = !deleteAll_section" class="sim">Sim</button>
+        <button @click="deleteAll_section = !deleteAll_section" class="nao">Não</button>
       </div>
     </div>
 
@@ -264,10 +299,9 @@ onUnmounted(() => {
         <button @click="delete_section = false" class="desconfirm">Não</button>
       </div>
     </div>
-
     <div class="complete" v-if="completa_section">
       <h2>Tarefa concluída: {{ pegarValoresTarefa().nome }}</h2>
-      <p>descrição da tarefa: {{ pegarValoresTarefa().desc }}</p>
+      <p> {{ pegarValoresTarefa().desc }}</p>
     </div>
 
     <div class="esquerda">
@@ -301,60 +335,77 @@ onUnmounted(() => {
       <div class="lista-principal">
         <h2>
           lista de tarefas:
-          <button @click="deleteAll_section = !deleteAll_section" class="limparPrincipal">Limpar</button>
+          <button @click="deleteAll_section = !deleteAll_section" v-if="tarefas.length != 0"
+            class="limparPrincipal">Limpar</button>
         </h2>
 
         <!-- Itens da lista de tarefas que serão exibidos na tela fixa -->
-        <ul v-if="tarefas.length != 0">
+        <ul v-if="tarefas.length != 0 && !tarefaEditada">
           <li v-for="(tarefa, index) in tarefas" :key="index">
-            <button @click="abrirConfig(tarefa)" class="more"><font-awesome-icon :icon="faEllipsis"/></button>
+            <button @click="abrirConfig(tarefa)" class="more"><font-awesome-icon :icon="faEllipsis" /></button>
             <div class="menu" v-if="menu == tarefa" ref="menuRef">
-              <button @click="editarTarefa(tarefa)"><font-awesome-icon :icon="faPencil"/>Editar</button>
-              <button @click="excluirTarefa(tarefa)" class="excluir"><font-awesome-icon :icon="faTrash"/>Excluir</button>
+              <button @click="menu = null; editarTarefa(tarefa)"><font-awesome-icon :icon="faPencil" />Editar</button>
+              <button @click="menu = null; excluirTarefa(tarefa)" class="excluir"><font-awesome-icon
+                  :icon="faTrash" />Excluir</button>
             </div>
-            <!-- :style="{ border: tarefa.importancia == 'Baixa' ? '2px solid #015201' : tarefa.importancia == 'Média' ? '2px solid #6d6d00' : tarefa.importancia == 'Alta' ? '2px solid #430000' : '2px solid gray' }" -->
             <div class="principal">
               <h3>{{ tarefa.nome }}</h3>
               <div>
                 <p class="importancia">importância: <span
                     :style="{ backgroundColor: tarefa.importancia == 'Baixa' ? '#015201' : tarefa.importancia == 'Média' ? '#6d6d00' : tarefa.importancia == 'Alta' ? '#430000' : '#434343', color: tarefa.importancia == 'Baixa' ? '#01bb01' : tarefa.importancia == 'Média' ? '#ffff2b' : tarefa.importancia == 'Alta' ? 'red' : '#919191' }">{{
-                    tarefa.importancia }}</span>
+                      tarefa.importancia }}</span>
                 </p>
               </div>
             </div>
             <p class="desc" v-if="tarefa.desc.length != 0">{{ tarefa.desc }}</p>
-            <p class="desc" v-else>Sem descrição</p>
-            <div>
-              <p v-if="tarefa.dataInicio.length !== 0"><strong>data inicial:</strong> {{
+            <div class="datas">
+              <p v-if="tarefa.dataInicio.length !== 0" class="dataInicio"><strong></strong> {{
                 dataBonitinha(tarefa.dataInicio)
-                }}</p>
-              <p v-if="tarefa.dataFinal.length !== 0"><strong>data final:</strong> {{ tarefa.dataFinal }}</p>
+              }}</p>
+              <p v-else  class="dataInicio">Sem data inicial</p>
+              <p v-if="tarefa.dataFinal.length !== 0" class="dataFinal"><strong></strong> {{ dataBonitinha(tarefadataFinal) }}</p>
+              <p v-else class="dataFinal">Sem data final</p>
             </div>
             <div>
-              <button class="pronto" @click="concluirTarefa(tarefa); tarefa.status = 'completa';"><font-awesome-icon :icon="faCheck"/>Concluir Tarefa</button>
+              <button class="pronto" @click="concluirTarefa(tarefa); tarefa.status = 'completa';"><font-awesome-icon
+                  :icon="faCheck" />Concluir Tarefa</button>
             </div>
           </li>
         </ul>
-        <p v-else class="vazio">Não há tarefas registradas no momento</p>
+        <p v-else-if="tarefas.length == 0 && !tarefaEditada" class="vazio">Não há tarefas registradas no momento</p>
+        <p v-else class="vazio">Saia do modo de edição caso deseje voltar a ver suas tarefas</p>
       </div>
     </div>
 
     <div class="direita">
-      <h2>
+      <h2 class="listaPrincipalAll">
         lista de tarefas concluídas:
-        <button @click="tarefasConcluidas = [];"
+        <button @click="delCom_section = !delCom_section" class="limparConcluidas"
           :style="{ visibility: tarefasConcluidas.length == 0 ? 'hidden' : 'visible' }">Limpar</button>
       </h2>
-      <ul style="list-style: none;">
+      <ul v-if="tarefasConcluidas.length != 0 && tarefaEditada == null" style="list-style: none;">
         <li v-for="(tarefa, index) in tarefasConcluidas" :key="index">
-          <h4>{{ tarefa.nome }}</h4>
+          <div class="principalConcluida">
+            <h4>{{ tarefa.nome }}</h4>
+          <p>importncia: <span :style="{ backgroundColor: tarefa.importancia == 'Baixa' ? '#015201' : tarefa.importancia == 'Média' ? '#6d6d00' : tarefa.importancia == 'Alta' ? '#430000' : '#434343', color: tarefa.importancia == 'Baixa' ? '#01bb01' : tarefa.importancia == 'Média' ? '#ffff2b' : tarefa.importancia == 'Alta' ? 'red' : '#919191' }">{{ tarefa.importancia }}</span></p>
+          </div>
           <p v-if="tarefa.desc.length !== 0">{{ tarefa.desc }}</p>
+          <p v-else>Essa tarefa não tem descrição</p>
+          <div class="datas">
+              <p v-if="tarefa.dataInicio.length !== 0" class="dataInicio">Data final:<br> {{
+                dataBonitinha(tarefa.dataInicio)
+              }}</p>
+              <p v-else  class="dataInicio">Sem data inicial</p>
+              <p v-if="tarefa.dataFinal.length !== 0" class="dataFinal">Data final:<br> {{ dataBonitinha(tarefa.dataFinal) }}</p>
+              <p v-else class="dataFinal">Sem data final</p>
+            </div>
         </li>
       </ul>
+      <p v-else-if="tarefasConcluidas.length == 0 && tarefaEditada == null" class="vazio">Não há tarefas concluídas registradas no momento</p>
+      <p v-else class="vazio">Saia do modo de edição caso deseje voltar a ver suas tarefas concluídas</p>
     </div>
   </main>
 </template>
-
 <style scoped>
 body,
 html,
@@ -380,14 +431,13 @@ main {
     overflow-y: hidden;
     padding-inline: 2vw;
     text-align: center;
+
     .lista-principal {
       .vazio {
         font-size: 1.5vw;
-        position: absolute;
-        top: 50%;
-        right: 50%;
-        transform: translate(50%, -50%);
+        padding-top: 20vw;
       }
+
       .limparPrincipal {
         border: none;
         background-color: #3b0000;
@@ -396,10 +446,12 @@ main {
         padding: 0.5vw 0.8vw;
         border-radius: 20px;
       }
+
       .limparPrincipal:hover {
         background-color: #1f0000;
         cursor: pointer;
       }
+
       ul {
         padding-bottom: 15vw;
         margin-bottom: 15vw;
@@ -415,6 +467,7 @@ main {
           margin-top: 1vw;
           display: flex;
           gap: 2vw;
+
           .pronto {
             background-color: rgb(0, 71, 13);
             border: none;
@@ -447,6 +500,7 @@ main {
           font-size: 2vw;
           word-wrap: break-word;
         }
+
         .more {
           position: absolute;
           border: none;
@@ -459,10 +513,12 @@ main {
           transition: 0.2s ease all;
           border-radius: 15px;
         }
+
         .more:hover {
           cursor: pointer;
           background-color: rgb(41, 41, 41);
         }
+
         .menu {
           background-color: rgb(36, 36, 36);
           padding: 0.6vw 0.5vw;
@@ -475,6 +531,7 @@ main {
           right: 1.5vw;
           top: 3.5vw;
           box-shadow: 0px 0px 15px 15px rgba(0, 0, 0, 0.215);
+
           button {
             padding: 0.8vw;
             border-radius: 18px;
@@ -484,6 +541,7 @@ main {
             border: none;
             transition: 0.1s ease all;
           }
+
           button:hover {
             cursor: pointer;
             background-color: rgb(87, 87, 87);
@@ -528,8 +586,32 @@ main {
           color: rgb(154, 154, 154);
           font-size: 1.2vw;
         }
+      .datas {
+          display: flex;
+          justify-content: space-between;
+          border-top: 0.5px solid white;
+          padding-top: 1vw;
+          margin-top: 1vw;
+          margin-bottom: 2vw;
+          font-size: 1.3vw;
+          .dataInicio {
+            text-align: center;
+            background-color: rgb(85, 85, 85);
+            color: white;
+            padding: 0.7vw;
+            border-radius: 24px;
+          }
+          .dataFinal {
+            text-align: center;
+            background-color: rgb(85, 85, 85);
+            color: white;
+            padding: 0.7vw;
+            border-radius: 24px;
+          }
+        }
       }
     }
+
     h2 {
       font-size: 2vw;
       margin: 2vw;
@@ -537,8 +619,137 @@ main {
   }
 
   .direita {
+    position: relative;
+    max-height: 100vh;
+    overflow-y: hidden;
+    padding-inline: 2vw;
     box-shadow: -5px 0px 10px 10px rgba(12, 12, 12, 0.187);
     border-left: 0.5px solid rgb(41, 41, 41);
+
+    ul {
+      padding-bottom: 10vw;
+      margin-bottom: 5vw;
+      max-height: 80vh;
+      overflow-y: auto;
+      scrollbar-width: none;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 3vw;
+
+      div {
+        margin-top: 1vw;
+        display: flex;
+        gap: 2vw;
+
+        .pronto {
+          background-color: rgb(0, 71, 13);
+          border: none;
+          color: white;
+          font-size: 1.1vw;
+          padding: 0.5vw 0.8vw;
+          border-radius: 14px;
+          display: flex;
+          justify-content: center;
+          transition: 0.1s ease all;
+          align-items: center;
+        }
+
+        .pronto:hover {
+          cursor: pointer;
+          background-color: rgb(0, 41, 7);
+        }
+      }
+    }
+
+    .vazio {
+      font-size: 1.5vw;
+      position: absolute;
+      top: 50%;
+      right: 50%;
+      transform: translate(50%, -50%);
+    }
+
+    h2.listaPrincipalAll {
+      font-size: 2vw;
+      text-align: center;
+      padding: 2vw 0 2vw 0;
+
+      button {
+        border: none;
+        background-color: #3b0000;
+        color: white;
+        font-size: 1.5vw;
+        padding: 0.5vw 0.8vw;
+        border-radius: 20px;
+      }
+
+      button:hover {
+        background-color: #1f0000;
+        cursor: pointer;
+      }
+    }
+
+    li {
+      border: 2px solid rgb(38, 38, 38);
+      padding: 2vw 2vw;
+      width: 85%;
+      border-radius: 24px;
+      position: relative;
+
+      .principalConcluida {
+        width: 100%;
+        border-bottom: 1px solid white;
+        padding-bottom: 1vw;
+        margin-bottom: 1vw;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      h4 {
+        font-size: 2vw;
+        word-wrap: break-word;
+
+      }
+      p {
+        width: fit-content;
+        span {
+              border-radius: 12px;
+              padding: 0.3vw 0.6vw;
+            }
+      }
+    }
+
+      p {
+        text-align: left;
+        padding: 0 0.5vw;
+        width: 100%;
+        color: rgb(154, 154, 154);
+        font-size: 1.2vw;
+      }
+      .datas {
+          display: flex;
+          justify-content: space-between;
+          border-top: 0.5px solid white;
+          padding-top: 1vw;
+          margin-top: 1vw;
+          margin-bottom: 2vw;
+          font-size: 1.3vw;
+          .dataInicio {
+            text-align: center;
+            background-color: rgb(85, 85, 85);
+            color: white;
+            padding: 0.7vw;
+            border-radius: 24px;
+          }
+          .dataFinal {
+            text-align: center;
+            background-color: rgb(85, 85, 85);
+            color: white;
+            padding: 0.7vw;
+            border-radius: 24px;
+          }
+        }
+    }
   }
 }
 
@@ -568,14 +779,30 @@ main {
 }
 
 .complete {
-  background-color: white;
+  width: 70vh;
+  font-size: 1.3vw;
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  box-shadow: 0px 0px 30px 10px rgba(0, 0, 0, 0.132);
-  z-index: 3;
-  padding: 2vw 1vw;
+  box-shadow: 0px 0px 30px 10px rgba(21, 21, 21, 0.717);
+  padding: 2vw 2vw;
+  border-radius: 24px;
+  background-color: rgb(18, 18, 18);
+  z-index: 10;
+
+  h2 {
+    padding-bottom: 1vw;
+    margin-bottom: 1vw;
+    font-size: 1.6vw;
+    border-bottom: 1px solid white;
+  }
+
+  p {
+    color: rgb(154, 154, 154);
+    line-height: 1.7vw;
+    padding-left: 0.5vw;
+  }
 }
 
 .delete {
@@ -590,57 +817,69 @@ main {
   border-radius: 24px;
   background-color: rgb(18, 18, 18);
   z-index: 10;
+
   h2 {
     font-size: 2vw;
   }
+
   div {
-  h3 {
-    padding-bottom: 1vw;
-    margin-bottom: 1vw;
-    font-size: 1.6vw;
-    border-bottom: 1px solid white;
-  }
-  p {
-    color: rgb(154, 154, 154);
-  }
-  margin-top: 2vw;
-  width: 100%;
-  justify-content: center;
-  gap: 3vw;
+    margin-top: 2vw;
+    width: 100%;
+    justify-content: center;
+    gap: 3vw;
+
+    h3 {
+      padding-bottom: 1vw;
+      margin-bottom: 1vw;
+      font-size: 1.6vw;
+      border-bottom: 1px solid white;
+    }
+
+    p {
+      color: rgb(154, 154, 154);
+      padding-left: 0.5vw;
+    }
+
     button {
-    background-color: transparent;
-    color: white;
-    border: none;
-    font-size: 1.3vw;
-    padding: 0.5vw 1vw;
-    border-radius: 12px;
-    transition: all 0.1s ease;
-  }
-  .desconfirm {
-    background-color: rgb(0, 107, 0);
-  }
-  .confirm {
-    background-color: rgb(152, 0, 0);
-  }
-  .desconfirm:hover {
-    cursor: pointer;
-    background-color: rgb(0, 70, 0);
-  }
-  .confirm:hover {
-    cursor: pointer;
-    background-color: rgb(70, 0, 0);
-  }
+      background-color: transparent;
+      color: white;
+      border: none;
+      font-size: 1.3vw;
+      padding: 0.5vw 1vw;
+      border-radius: 12px;
+      transition: all 0.1s ease;
+    }
+
+    .desconfirm {
+      background-color: rgb(0, 107, 0);
+    }
+
+    .confirm {
+      background-color: rgb(152, 0, 0);
+    }
+
+    .desconfirm:hover {
+      cursor: pointer;
+      background-color: rgb(0, 70, 0);
+    }
+
+    .confirm:hover {
+      cursor: pointer;
+      background-color: rgb(70, 0, 0);
+    }
   }
 }
 
 .deleteAll {
+  text-align: center;
+  width: 70vh;
   font-size: 1.3vw;
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   box-shadow: 0px 0px 30px 10px rgba(21, 21, 21, 0.717);
-  padding: 2vw 1vw;
+  padding: 2vw 2vw;
   border-radius: 24px;
   background-color: rgb(18, 18, 18);
   z-index: 10;
@@ -648,20 +887,86 @@ main {
   div {
     margin-top: 2vw;
     width: 100%;
-  display: flex;
-  justify-content: center;
-  gap: 3vw;
+    display: flex;
+    justify-content: center;
+    gap: 3vw;
+
     button {
-    background-color: transparent;
-    color: white;
-    border: none;
-    font-size: 1.3vw;
-    padding: 0.5vw 1vw;
-    border-radius: 12px;
+      background-color: transparent;
+      color: white;
+      border: none;
+      font-size: 1.3vw;
+      padding: 0.5vw 1vw;
+      border-radius: 12px;
+    }
+
+    .nao {
+      background-color: rgb(0, 107, 0);
+    }
+
+    .sim {
+      background-color: rgb(152, 0, 0);
+    }
+
+    .nao:hover {
+      cursor: pointer;
+      background-color: rgb(0, 70, 0);
+    }
+
+    .sim:hover {
+      cursor: pointer;
+      background-color: rgb(70, 0, 0);
+    }
   }
-  button:hover {
-    background-color: rgb(43, 43, 43);
-  }
+}
+
+.deleteAllComplete {
+  text-align: center;
+  width: 70vh;
+  font-size: 1.3vw;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0px 0px 30px 10px rgba(21, 21, 21, 0.717);
+  padding: 2vw 2vw;
+  border-radius: 24px;
+  background-color: rgb(18, 18, 18);
+  z-index: 10;
+
+  div {
+    margin-top: 2vw;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 3vw;
+
+    button {
+      background-color: transparent;
+      color: white;
+      border: none;
+      font-size: 1.3vw;
+      padding: 0.5vw 1vw;
+      border-radius: 12px;
+    }
+
+    .naoComplete {
+      background-color: rgb(0, 107, 0);
+    }
+
+    .simComplete {
+      background-color: rgb(152, 0, 0);
+    }
+
+    .naoComplete:hover {
+      cursor: pointer;
+      background-color: rgb(0, 70, 0);
+    }
+
+    .simComplete:hover {
+      cursor: pointer;
+      background-color: rgb(70, 0, 0);
+    }
   }
 }
 </style>
