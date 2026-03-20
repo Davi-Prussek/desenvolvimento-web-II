@@ -152,8 +152,8 @@ function esvaziar() {
   }
 }
 function confirmDelete() {
-  tarefas.value.splice(tarefas.value.indexOf(tarefaConcluida.value), 1);
   tarefasApagadas.value.unshift(tarefaConcluida.value);
+  tarefas.value.splice(tarefas.value.indexOf(tarefaConcluida.value), 1);
   delete_section.value = !delete_section.value;
 }
 function pegarValoresTarefa() {
