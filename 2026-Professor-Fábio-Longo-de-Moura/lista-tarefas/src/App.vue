@@ -1,6 +1,6 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
-import { faTrash, faPencil, faCheck, faEllipsis } from '@fortawesome/free-solid-svg-icons';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { faTrash, faPencil, faCheck, faEllipsis,faQuestion } from '@fortawesome/free-solid-svg-icons';
 const menu = ref(true)
 const menuRef = ref(null)
 const add_section = ref(false);
@@ -8,6 +8,8 @@ const completa_section = ref(false);
 const delete_section = ref(false);
 const deleteAll_section = ref(false);
 const delCom_section = ref(false);
+const apagadasVazio_section = ref(false);
+const filtro = ref('');
 class tarefa {
   constructor(nome, desc, dataInicio, dataFinal, status, importancia) {
     this.nome = LMP(nome.trim());
@@ -18,42 +20,9 @@ class tarefa {
     this.importancia = importancia || 'padrão';
   }
 }
-const tarefas = ref([
-  new tarefa('Teste 1',
-    '"a tecnologia transformou profundamente a maneira como vivemos, trabalhamos e nos comunicamos. no centro dessa revolução, a inteligência artificial e a conectividade constante oferecem soluções rápidas para desafios complexos, otimizando o tempo e abrindo novas possibilidades de aprendizado."',
-    '1111-11-11T11:11',
-    '1212-12-12T12:12',
-    'incompleta',
-    'Baixa'
-  ),
-  new tarefa(
-    'Teste 2',
-    'testando 2',
-    '',
-    '',
-    'incompleta',
-    'Média'
-  ),
-  new tarefa(
-    'Teste 3',
-    'testando 3',
-    '',
-    '',
-    'incompleta',
-    'Alta'
-  )
-]);
+const tarefas = ref([]);
 const tarefasConcluidas = ref([]);
-
-for (let i = 1; i < 11; i++) {
-  tarefasConcluidas.value.push(new tarefa(`Teste ${i}`,
-    `testando ${i}`,
-    '',
-    '',
-    'incompleta',
-    'Baixa'
-  ))
-}
+const tarefasApagadas = ref([]);
 const nome = ref("");
 const desc = ref("");
 const dataInicio = ref('');
@@ -63,7 +32,14 @@ const aviso = ref("");
 const tempo = 2600;
 const tarefaConcluida = ref(null);
 const tarefaEditada = ref(null);
+const dica = ref(false);
 
+function abrirDica() {
+  dica.value = !dica.value;
+  setTimeout(() => {
+    dica.value = !dica.value;
+        }, 5000);
+}
 function abrirConfig(tarefa) {
   if (menu.value === tarefa) {
     menu.value = null
@@ -160,8 +136,24 @@ function excluirTarefa(tarefa) {
   tarefaConcluida.value = tarefa;
   delete_section.value = !delete_section.value;
 }
+function recuperar() {
+  if (tarefasApagadas.value.length > 0) {
+    tarefas.value.push(tarefasApagadas.value.pop());
+  } else {
+    apagadasVazio_section.value = !apagadasVazio_section.value;
+    setTimeout(() => {
+      apagadasVazio_section.value = !apagadasVazio_section.value;;
+    }, tempo);
+  }
+}
+function esvaziar() {
+  while (tarefas.value.length > 0) {
+    tarefasApagadas.value.unshift(tarefas.value.shift());
+  }
+}
 function confirmDelete() {
   tarefas.value.splice(tarefas.value.indexOf(tarefaConcluida.value), 1);
+  tarefasApagadas.value.unshift(tarefaConcluida.value);
   delete_section.value = !delete_section.value;
 }
 function pegarValoresTarefa() {
@@ -259,6 +251,11 @@ function zerarForm() {
   dataFinal.value = '';
   importancia.value = '';
 }
+const tarefasFiltradas = computed(() => {
+  if (filtro.value == '') {return tarefas.value};
+
+  return tarefas.value.filter(tarefa => tarefa.nome.toLowerCase().includes(filtro.value.toLowerCase()) || tarefa.desc.toLowerCase().includes(filtro.value.toLowerCase()))
+})
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
   document.addEventListener('click', handleClickOutsideDelete)
@@ -288,7 +285,7 @@ onUnmounted(() => {
     <div class="deleteAll" v-if="deleteAll_section">
       <p>Deseja mesmo limpar todas as tarefas registradas?</p>
       <div>
-        <button @click="tarefas = []; deleteAll_section = !deleteAll_section" class="sim">Sim</button>
+        <button @click="esvaziar(); deleteAll_section = !deleteAll_section" class="sim">Sim</button>
         <button @click="deleteAll_section = !deleteAll_section" class="nao">Não</button>
       </div>
     </div>
@@ -333,19 +330,35 @@ onUnmounted(() => {
         </div>
         <button @click="registrar">Registrar tarefa</button>
       </div>
+      <div class="filtro" v-if="!tarefaEditada" @keydown.esc="filtro = ''">
+        <label for="filtro">Filtrar tarefas:</label>
+        <div>
+          <input id="filtro" type="text" v-model="filtro" placeholder="Filtrar">
+        <button @click="abrirDica"><font-awesome-icon :icon="faQuestion" />
+        </button>
+        <p class="detail" v-if="dica">Você pode esvaziar o filtro de forma automática clicando Esc
+          enquanto estiver com a sessão dele selecionada</p>
+        </div>
+      </div>
+      <div class="vazioFiltro" v-else>
+        <p>Saia do modo de edição caso deseje filtrar suas tarefas(Esc).</p>
+      </div>
     </div>
 
     <div class="meio">
       <div class="lista-principal">
         <h2>
           lista de tarefas:
-          <button @click="deleteAll_section = !deleteAll_section" v-if="tarefas.length != 0"
-            class="limparPrincipal">Limpar</button>
+          <div>
+            <button @click="deleteAll_section = !deleteAll_section" v-if="tarefas.length != 0"
+              class="limparPrincipal">Esvaziar</button>
+            <button v-if="tarefasApagadas.length != 0" class="RetornarPrincipal" @click="recuperar">Recuperar</button>
+          </div>
         </h2>
 
         <!-- Itens da lista de tarefas que serão exibidos na tela fixa -->
         <ul v-if="tarefas.length != 0 && !tarefaEditada">
-          <li v-for="(tarefa, index) in tarefas" :key="index">
+          <li v-for="(tarefa, index) in tarefasFiltradas" :key="index">
             <button @click="abrirConfig(tarefa)" class="more"><font-awesome-icon :icon="faEllipsis" /></button>
             <div class="menu" v-if="menu == tarefa" ref="menuRef">
               <button @click="menu = null; editarTarefa(tarefa)"><font-awesome-icon :icon="faPencil" />Editar</button>
@@ -365,7 +378,7 @@ onUnmounted(() => {
             <div class="datas">
               <p v-if="tarefa.dataInicio.length !== 0" class="dataInicio"><strong></strong> {{
                 dataBonitinha(tarefa.dataInicio)
-              }}</p>
+                }}</p>
               <p v-else class="dataInicio">Sem data inicial</p>
               <p v-if="tarefa.dataFinal.length !== 0" class="dataFinal"><strong></strong> {{
                 dataBonitinha(tarefa.dataFinal) }}</p>
@@ -401,10 +414,10 @@ onUnmounted(() => {
           <div class="datas">
             <p v-if="tarefa.dataInicio.length !== 0" class="dataInicio">Data final:<br> {{
               dataBonitinha(tarefa.dataInicio)
-              }}</p>
+            }}</p>
             <p v-else class="dataInicio">Sem data inicial</p>
             <p v-if="tarefa.dataFinal.length !== 0" class="dataFinal">Data final:<br> {{ dataBonitinha(tarefa.dataFinal)
-            }}</p>
+              }}</p>
             <p v-else class="dataFinal">Sem data final</p>
           </div>
         </li>
@@ -413,9 +426,12 @@ onUnmounted(() => {
         registradas no momento</p>
       <p v-else class="vazio">Saia do modo de edição caso deseje voltar a ver suas tarefas concluídas(Esc).</p>
     </div>
-    <div v-if="aviso" class="aviso">
+    <div class="aviso" v-if="aviso">
       <h2>ERRO NO PREENCHIMENTO DO FORMULÁRIO DA TAREFA: </h2>
       <p> {{ aviso }}</p>
+    </div>
+    <div class="apagadasVazio_section" v-if="apagadasVazio_section">
+      <h2>Nenhuma tarefa foi apagada!</h2>
     </div>
   </main>
 </template>
@@ -433,29 +449,51 @@ main {
   .direita {
     flex: 1;
   }
-.aviso {
-  text-align: center;
-  width: 70vh;
-  font-size: 1.3vw;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  box-shadow: 0px 0px 30px 10px rgba(21, 21, 21, 0.717);
-  padding: 2vw 2vw;
-  border-radius: 24px;
-  background-color: rgb(18, 18, 18);
-  z-index: 10;
-  h2 {
-    padding-bottom: 1vw;
-    margin-bottom: 1vw;
-    border-bottom: 0.5px solid white;
-  }
-        p {
-        font-size: 1.2vw;
-      }
-}
 
+  .aviso {
+    text-align: center;
+    width: 70vh;
+    font-size: 1.3vw;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0px 0px 30px 10px rgba(21, 21, 21, 0.717);
+    padding: 2vw 2vw;
+    border-radius: 24px;
+    background-color: rgb(18, 18, 18);
+    z-index: 10;
+
+    h2 {
+      padding-bottom: 1vw;
+      margin-bottom: 1vw;
+      border-bottom: 0.5px solid white;
+    }
+
+    p {
+      font-size: 1.2vw;
+    }
+  }
+.apagadasVazio_section {
+    text-align: center;
+    width: 70vh;
+    font-size: 1.3vw;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0px 0px 30px 10px rgba(21, 21, 21, 0.717);
+    padding: 2vw 2vw;
+    border-radius: 24px;
+    background-color: rgb(18, 18, 18);
+    z-index: 10;
+
+    h2 {
+      padding-bottom: 1vw;
+      margin-bottom: 1vw;
+      border-bottom: 0.5px solid white;
+    }
+}
   .esquerda {
     max-width: flex 1;
     box-shadow: 5px 0px 10px 10px rgba(12, 12, 12, 0.187);
@@ -464,21 +502,26 @@ main {
     display: flex;
     flex-direction: column;
     align-items: center;
-
+    h2 {
+      font-size: 2vw;
+      margin: 2vw;
+      margin-bottom: 1vw;
+    }
     .form {
+      margin-bottom: 1vw;
       text-align: left;
-      max-width: fit-content;
+      width: max-content;
       border-radius: 24px;
       padding: 2vw 2vw;
       box-shadow: 0px 0px 30px 10px rgba(0, 0, 0, 0.132);
       display: flex;
       flex-direction: column;
-      gap: 1.5vw;
+      gap: 1.2vw;
       border: 1px solid rgb(41, 41, 41);
       background-color: rgb(23, 23, 23);
       color: white;
       position: relative;
-
+      margin-inline: 2vw;
       label {
         font-size: 1.5vw;
         width: fit-content;
@@ -537,11 +580,71 @@ main {
         background-color: rgb(0, 41, 7);
       }
     }
-
-    h2 {
-      font-size: 2vw;
-      margin: 2vw;
+    .filtro {
+      display: flex;
+      text-align: left;
+      margin-inline: 2vw;
+      border-radius: 24px;
+      padding: 1.5vw 2vw;
+      gap: 1vw;
+      box-shadow: 0px 0px 30px 10px rgba(0, 0, 0, 0.132);
+      border: 1px solid rgb(41, 41, 41);
+      background-color: rgb(23, 23, 23);
+      color: white;
+      position: relative;
+      label {
+        font-size: 1.5vw;
+        width: fit-content;
+      }
+      div {
+        display: flex;
+        justify-content: center;
+        gap: 1vw;
+        align-items: center;
+        input {
+        border: none;
+        border-radius: 12px;
+        padding: 0.5vw 0.6vw;
+        font-size: 1vw;
+        background-color: rgb(37, 37, 37);
+        color: white;
+      }
+      button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: transparent;
+        color: white;
+        border: 1px solid white;
+        font-size: 1.5vw;
+        border-radius: 50%;
+        height: 2vw;
+        width: 2vw;
+        padding: 1vw;
+      }
+      button:hover {
+        background-color: rgb(0, 73, 0);
+      }
+      .detail {
+        background-color: black;
+        z-index: 10;
+        font-size: 1.2vw;
+        padding: 0.7vw;
+        border-radius: 12px;
+        word-wrap: break-word;
+        position: absolute;
+        width: 15vh;
+        top: -10vh;
+        right: -15vh;
+      }
+      }
     }
+    .vazioFiltro {
+      font-size: 1.3vw;
+      padding-inline: 2vw;
+      margin-top: 2vw;
+    }
+
   }
 
   .meio {
@@ -556,18 +659,41 @@ main {
         padding-top: 20vw;
       }
 
-      .limparPrincipal {
-        border: none;
-        background-color: #3b0000;
-        color: white;
-        font-size: 1.5vw;
-        padding: 0.5vw 0.8vw;
-        border-radius: 20px;
-      }
+      h2 {
+        div {
+          display: flex;
+          justify-content: center;
+          gap: 2vw;
+          padding-top: 1vw;
 
-      .limparPrincipal:hover {
-        background-color: #1f0000;
-        cursor: pointer;
+          .limparPrincipal {
+            border: none;
+            background-color: #3b0000;
+            color: white;
+            font-size: 1.3vw;
+            padding: 0.5vw 0.8vw;
+            border-radius: 20px;
+          }
+
+          .limparPrincipal:hover {
+            background-color: #1f0000;
+            cursor: pointer;
+          }
+
+          .RetornarPrincipal {
+            border: none;
+            background-color: #3b0000;
+            color: white;
+            font-size: 1.3vw;
+            padding: 0.5vw 0.8vw;
+            border-radius: 20px;
+          }
+
+          .RetornarPrincipal:hover {
+            background-color: #1f0000;
+            cursor: pointer;
+          }
+        }
       }
 
       ul {
