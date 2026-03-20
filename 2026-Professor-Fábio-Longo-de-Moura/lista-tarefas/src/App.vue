@@ -268,7 +268,7 @@ onUnmounted(() => {
   document.removeEventListener('click', handleClickOutsideDelete)
   document.removeEventListener('click', handleClickOutsideDeleteAll)
   document.removeEventListener('click', handleClickOutsideDeleteAllComplete)
-  document.addEventListener('keydown', escBonitinho)
+  document.removeEventListener('keydown', escBonitinho)
 })
 </script>
 <template>
