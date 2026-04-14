@@ -1,8 +1,9 @@
 <script setup>
+import LeftPart from '@/components/leftPart.vue'
+import MiddlePart from '@/components/MiddlePart.vue'
+import RightPart from '@/components/RightPart.vue'
 import { ref, onMounted, onUnmounted, computed } from 'vue';
-import { faTrash, faPencil, faCheck, faEllipsis,faQuestion } from '@fortawesome/free-solid-svg-icons';
-const menu = ref(true)
-const menuRef = ref(null)
+const menu = ref(true);
 const add_section = ref(false);
 const completa_section = ref(false);
 const delete_section = ref(false);
@@ -23,23 +24,11 @@ class tarefa {
 const tarefas = ref([]);
 const tarefasConcluidas = ref([]);
 const tarefasApagadas = ref([]);
-const nome = ref("");
-const desc = ref("");
-const dataInicio = ref('');
-const dataFinal = ref('');
-const importancia = ref('');
 const aviso = ref("");
 const tempo = 2600;
 const tarefaConcluida = ref(null);
 const tarefaEditada = ref(null);
-const dica = ref(false);
 
-function abrirDica() {
-  dica.value = !dica.value;
-  setTimeout(() => {
-    dica.value = !dica.value;
-        }, 5000);
-}
 function abrirConfig(tarefa) {
   if (menu.value === tarefa) {
     menu.value = null
@@ -51,10 +40,8 @@ function LMP(nome) {
   return nome.charAt(0).toUpperCase() + nome.toLowerCase().substring(1)
 }
 function validarNome(nome) {
-  //Validação de nome vazio
   if (nome.length !== 0) {
     if (nome.length <= 40) {
-      //Validação de nome com números
       if (!/[a-zA-Z]/.test(nome)) {
         aviso.value = 'O nome da tarefa deve ter apenas letras'
         setTimeout(() => {
@@ -112,15 +99,17 @@ function validarDatas(dataInicio, dataFinal) {
     return true;
   }
 }
-function registrar() {
-  if (validarNome(nome.value) && validarDesc(desc.value) && validarDatas(dataInicio.value, dataFinal.value)) {
-    if (tarefaEditada.value) {
-      tarefas.value.splice(tarefas.value.indexOf(tarefaEditada.value), 1);
-      tarefaEditada.value = null;
-    }
-    tarefas.value.unshift(new tarefa(LMP(nome.value), LMP(desc.value), dataInicio.value, dataFinal.value, 'incompleta', importancia.value));
-    [nome.value, desc.value, dataInicio.value, dataFinal.value, importancia.value] = ['', '', '', '', ''];
-    add_section.value = !add_section.value;
+function registrar(dados) {
+  const { nome, desc, dataInicio, dataFinal, importancia } = dados;
+
+  if (
+    validarNome(nome) &&
+    validarDesc(desc) &&
+    validarDatas(dataInicio, dataFinal)
+  ) {
+    tarefas.value.unshift(
+      new tarefa(nome, desc, dataInicio, dataFinal, 'incompleta', importancia)
+    );
   }
 }
 function concluirTarefa(tarefa) {
@@ -152,8 +141,8 @@ function esvaziar() {
   }
 }
 function confirmDelete() {
-  tarefasApagadas.value.unshift(tarefaConcluida.value);
   tarefas.value.splice(tarefas.value.indexOf(tarefaConcluida.value), 1);
+  tarefasApagadas.value.unshift(tarefaConcluida.value);
   delete_section.value = !delete_section.value;
 }
 function pegarValoresTarefa() {
@@ -165,42 +154,9 @@ function pegarValoresTarefa() {
     importancia: tarefaConcluida.value.importancia
   }
 }
-function converterDataBR(data) {
-  if (!data) return '';
-
-  const [dia, mes, anoHora] = data.split('/');
-  const [ano, hora] = anoHora.split(' ');
-
-  return `${ano}-${mes}-${dia}T${hora}`;
-}
-function dataBonitinha(data) {
-  if (!data) return 'Sem data';
-
-  // se vier no formato BR
-  if (data.includes('/')) {
-    data = converterDataBR(data);
-  }
-
-  const d = new Date(data);
-
-  if (isNaN(d)) return 'Data inválida';
-
-  return d.toLocaleString('pt-BR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
 function editarTarefa(tarefa) {
   tarefaEditada.value = tarefa;
   add_section.value = !add_section.value;
-  nome.value = tarefaEditada.value.nome;
-  desc.value = tarefaEditada.value.desc;
-  dataInicio.value = tarefaEditada.value.dataInicio;
-  dataFinal.value = tarefaEditada.value.dataFinal;
-  importancia.value = tarefaEditada.value.importancia;
 }
 function handleClickOutside(event) {
   const clicouNoBotao = event.target.closest('.more')
@@ -237,25 +193,15 @@ function handleClickOutsideDeleteAllComplete(event) {
 function escBonitinho(event) {
   if (event.key === 'Escape' && tarefaEditada.value != null) {
     tarefaEditada.value = null;
-    nome.value = '';
-    desc.value = '';
-    dataInicio.value = '';
-    dataFinal.value = '';
-    importancia.value = '';
   }
 }
-function zerarForm() {
-  nome.value = '';
-  desc.value = '';
-  dataInicio.value = '';
-  dataFinal.value = '';
-  importancia.value = '';
-}
+
 const tarefasFiltradas = computed(() => {
   if (filtro.value == '') {return tarefas.value};
 
   return tarefas.value.filter(tarefa => tarefa.nome.toLowerCase().includes(filtro.value.toLowerCase()) || tarefa.desc.toLowerCase().includes(filtro.value.toLowerCase()))
 })
+
 onMounted(() => {
   document.addEventListener('click', handleClickOutside)
   document.addEventListener('click', handleClickOutsideDelete)
@@ -273,7 +219,12 @@ onUnmounted(() => {
 </script>
 <template>
   <main style="display: flex; justify-content: space-around;">
-
+<LeftPart
+  :tarefaEditada="tarefaEditada"
+  :filtro="filtro"
+  @salvar="registrar"
+  @update:filtro="filtro = $event"
+/>
     <div class="deleteAllComplete" v-if="delCom_section">
       <p>Deseja mesmo limpar todas as tarefas concluídas?</p>
       <div>
@@ -305,127 +256,9 @@ onUnmounted(() => {
       <h2>Tarefa concluída: {{ pegarValoresTarefa().nome }}</h2>
       <p> {{ pegarValoresTarefa().desc }}</p>
     </div>
+<MiddlePart :tarefas="tarefas" :tarefasFiltradas="tarefasFiltradas" :tarefasApagadas="tarefasApagadas" :tarefaEditada="tarefaEditada" :menu="menu" @toggleMenu="abrirConfig" @editar="editarTarefa" @excluir="excluirTarefa" @concluir="concluirTarefa" @esvaziar="deleteAll_section = true" @recuperar="recuperar"/>
 
-    <div class="esquerda">
-      <h2 v-if="tarefaEditada == null">Criar tarefa</h2>
-      <h2 v-if="tarefaEditada !== null">Editar tarefa</h2>
-      <div class="form" @keypress.enter="registrar" @keydown.esc="zerarForm">
-        <div><label for="nome">Nome da tarefa:</label> <input id="nome" type="text" v-model="nome"
-            placeholder="Nome da tarefa"></div>
-        <div>
-          <label for="importância">Prioridade: </label>
-          <select v-model="importancia" id="importância" name="importância">
-            <option disabled value="">importância</option>
-            <option value="Baixa">não importante</option>
-            <option value="Média">pouco importante</option>
-            <option value="Alta">muito importante</option>
-          </select>
-        </div>
-        <label for="desc">Descrição da tarefa:</label> <textarea id="desc" type="text" v-model="desc"
-          placeholder="Descrição da tarefa"></textarea>
-        <div class="dateForm">
-          <label for="data_inicio">Data de início:</label> <input id="data_inicio" type="datetime-local"
-            v-model="dataInicio">
-          <label for="Data_final">Data final:</label> <input id="Data_final" type="datetime-local" v-model="dataFinal">
-        </div>
-        <button @click="registrar">Registrar tarefa</button>
-      </div>
-      <div class="filtro" v-if="!tarefaEditada" @keydown.esc="filtro = ''">
-        <label for="filtro">Filtrar tarefas:</label>
-        <div>
-          <input id="filtro" type="text" v-model="filtro" placeholder="Filtrar">
-        <button @click="abrirDica"><font-awesome-icon :icon="faQuestion" />
-        </button>
-        <p class="detail" v-if="dica">Você pode esvaziar o filtro de forma automática clicando Esc
-          enquanto estiver com a sessão dele selecionada</p>
-        </div>
-      </div>
-      <div class="vazioFiltro" v-else>
-        <p>Saia do modo de edição caso deseje filtrar suas tarefas(Esc).</p>
-      </div>
-    </div>
-
-    <div class="meio">
-      <div class="lista-principal">
-        <h2>
-          lista de tarefas:
-          <div>
-            <button @click="deleteAll_section = !deleteAll_section" v-if="tarefas.length != 0"
-              class="limparPrincipal">Esvaziar</button>
-            <button v-if="tarefasApagadas.length != 0" class="RetornarPrincipal" @click="recuperar">Recuperar</button>
-          </div>
-        </h2>
-
-        <!-- Itens da lista de tarefas que serão exibidos na tela fixa -->
-        <ul v-if="tarefas.length != 0 && !tarefaEditada">
-          <li v-for="(tarefa, index) in tarefasFiltradas" :key="index">
-            <button @click="abrirConfig(tarefa)" class="more"><font-awesome-icon :icon="faEllipsis" /></button>
-            <div class="menu" v-if="menu == tarefa" ref="menuRef">
-              <button @click="menu = null; editarTarefa(tarefa)"><font-awesome-icon :icon="faPencil" />Editar</button>
-              <button @click="menu = null; excluirTarefa(tarefa)" class="excluir"><font-awesome-icon
-                  :icon="faTrash" />Excluir</button>
-            </div>
-            <div class="principal">
-              <h3>{{ tarefa.nome }}</h3>
-              <div>
-                <p class="importancia">importância: <span
-                    :style="{ backgroundColor: tarefa.importancia == 'Baixa' ? '#015201' : tarefa.importancia == 'Média' ? '#6d6d00' : tarefa.importancia == 'Alta' ? '#430000' : '#434343', color: tarefa.importancia == 'Baixa' ? '#01bb01' : tarefa.importancia == 'Média' ? '#ffff2b' : tarefa.importancia == 'Alta' ? 'red' : '#919191' }">{{
-                      tarefa.importancia }}</span>
-                </p>
-              </div>
-            </div>
-            <p class="desc" v-if="tarefa.desc.length != 0">{{ tarefa.desc }}</p>
-            <div class="datas">
-              <p v-if="tarefa.dataInicio.length !== 0" class="dataInicio"><strong></strong> {{
-                dataBonitinha(tarefa.dataInicio)
-                }}</p>
-              <p v-else class="dataInicio">Sem data inicial</p>
-              <p v-if="tarefa.dataFinal.length !== 0" class="dataFinal"><strong></strong> {{
-                dataBonitinha(tarefa.dataFinal) }}</p>
-              <p v-else class="dataFinal">Sem data final</p>
-            </div>
-            <div>
-              <button class="pronto" @click="concluirTarefa(tarefa); tarefa.status = 'completa';"><font-awesome-icon
-                  :icon="faCheck" />Concluir Tarefa</button>
-            </div>
-          </li>
-        </ul>
-        <p v-else-if="tarefas.length == 0 && !tarefaEditada" class="vazio">Não há tarefas registradas no momento</p>
-        <p v-else class="vazio">Saia do modo de edição caso deseje voltar a ver suas tarefas(Esc).</p>
-      </div>
-    </div>
-
-    <div class="direita">
-      <h2 class="listaPrincipalAll">
-        lista de tarefas concluídas:
-        <button @click="delCom_section = !delCom_section" class="limparConcluidas"
-          :style="{ visibility: tarefasConcluidas.length == 0 ? 'hidden' : 'visible' }">Limpar</button>
-      </h2>
-      <ul v-if="tarefasConcluidas.length != 0 && tarefaEditada == null" style="list-style: none;">
-        <li v-for="(tarefa, index) in tarefasConcluidas" :key="index">
-          <div class="principalConcluida">
-            <h4>{{ tarefa.nome }}</h4>
-            <p>importncia: <span
-                :style="{ backgroundColor: tarefa.importancia == 'Baixa' ? '#015201' : tarefa.importancia == 'Média' ? '#6d6d00' : tarefa.importancia == 'Alta' ? '#430000' : '#434343', color: tarefa.importancia == 'Baixa' ? '#01bb01' : tarefa.importancia == 'Média' ? '#ffff2b' : tarefa.importancia == 'Alta' ? 'red' : '#919191' }">{{
-                  tarefa.importancia }}</span></p>
-          </div>
-          <p v-if="tarefa.desc.length !== 0">{{ tarefa.desc }}</p>
-          <p v-else>Essa tarefa não tem descrição</p>
-          <div class="datas">
-            <p v-if="tarefa.dataInicio.length !== 0" class="dataInicio">Data final:<br> {{
-              dataBonitinha(tarefa.dataInicio)
-            }}</p>
-            <p v-else class="dataInicio">Sem data inicial</p>
-            <p v-if="tarefa.dataFinal.length !== 0" class="dataFinal">Data final:<br> {{ dataBonitinha(tarefa.dataFinal)
-              }}</p>
-            <p v-else class="dataFinal">Sem data final</p>
-          </div>
-        </li>
-      </ul>
-      <p v-else-if="tarefasConcluidas.length == 0 && tarefaEditada == null" class="vazio">Não há tarefas concluídas
-        registradas no momento</p>
-      <p v-else class="vazio">Saia do modo de edição caso deseje voltar a ver suas tarefas concluídas(Esc).</p>
-    </div>
+<RightPart :tarefasConcluidas="tarefasConcluidas" :tarefaEditada="tarefaEditada" @limparConcluidas="delCom_section = true"/>
     <div class="aviso" v-if="aviso">
       <h2>ERRO NO PREENCHIMENTO DO FORMULÁRIO DA TAREFA: </h2>
       <p> {{ aviso }}</p>
@@ -494,159 +327,6 @@ main {
       border-bottom: 0.5px solid white;
     }
 }
-  .esquerda {
-    max-width: flex 1;
-    box-shadow: 5px 0px 10px 10px rgba(12, 12, 12, 0.187);
-    border-right: 0.5px solid rgb(41, 41, 41);
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    h2 {
-      font-size: 2vw;
-      margin: 2vw;
-      margin-bottom: 1vw;
-    }
-    .form {
-      margin-bottom: 1vw;
-      text-align: left;
-      width: max-content;
-      border-radius: 24px;
-      padding: 2vw 2vw;
-      box-shadow: 0px 0px 30px 10px rgba(0, 0, 0, 0.132);
-      display: flex;
-      flex-direction: column;
-      gap: 1.2vw;
-      border: 1px solid rgb(41, 41, 41);
-      background-color: rgb(23, 23, 23);
-      color: white;
-      position: relative;
-      margin-inline: 2vw;
-      label {
-        font-size: 1.5vw;
-        width: fit-content;
-      }
-
-      input,
-      select,
-      textarea {
-        border: none;
-        border-radius: 12px;
-        padding: 0.4vw 0.5vw;
-        font-size: 1vw;
-        background-color: rgb(37, 37, 37);
-        color: white;
-      }
-
-      textarea {
-        resize: none;
-        height: 8vh;
-      }
-
-      input#desc {
-        height: 20vh;
-
-      }
-
-      button {
-        background-color: gray;
-      }
-
-      #desc {
-        padding: 1vw 0.5vw;
-      }
-
-      .dateForm {
-        display: flex;
-        flex-direction: column;
-        gap: 1vw;
-      }
-
-      button {
-        background-color: rgb(0, 71, 13);
-        border: none;
-        color: white;
-        font-size: 1.1vw;
-        padding: 0.5vw 0.8vw;
-        border-radius: 14px;
-        display: flex;
-        justify-content: center;
-        transition: 0.1s ease all;
-        align-items: center;
-      }
-
-      button:hover {
-        cursor: pointer;
-        background-color: rgb(0, 41, 7);
-      }
-    }
-    .filtro {
-      display: flex;
-      text-align: left;
-      margin-inline: 2vw;
-      border-radius: 24px;
-      padding: 1.5vw 2vw;
-      gap: 1vw;
-      box-shadow: 0px 0px 30px 10px rgba(0, 0, 0, 0.132);
-      border: 1px solid rgb(41, 41, 41);
-      background-color: rgb(23, 23, 23);
-      color: white;
-      position: relative;
-      label {
-        font-size: 1.5vw;
-        width: fit-content;
-      }
-      div {
-        display: flex;
-        justify-content: center;
-        gap: 1vw;
-        align-items: center;
-        input {
-        border: none;
-        border-radius: 12px;
-        padding: 0.5vw 0.6vw;
-        font-size: 1vw;
-        background-color: rgb(37, 37, 37);
-        color: white;
-      }
-      button {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: transparent;
-        color: white;
-        border: 1px solid white;
-        font-size: 1.5vw;
-        border-radius: 50%;
-        height: 2vw;
-        width: 2vw;
-        padding: 1vw;
-      }
-      button:hover {
-        background-color: rgb(0, 73, 0);
-      }
-      .detail {
-        background-color: black;
-        z-index: 10;
-        font-size: 1.2vw;
-        padding: 0.7vw;
-        border-radius: 12px;
-        word-wrap: break-word;
-        position: absolute;
-        width: 15vh;
-        top: -10vh;
-        right: -15vh;
-      }
-      }
-    }
-    .vazioFiltro {
-      font-size: 1.3vw;
-      padding-inline: 2vw;
-      margin-top: 2vw;
-    }
-
-  }
-
   .meio {
     max-height: 100vh;
     overflow-y: hidden;
@@ -862,146 +542,6 @@ main {
     h2 {
       font-size: 2vw;
       margin: 2vw;
-    }
-  }
-
-  .direita {
-    position: relative;
-    max-height: 100vh;
-    overflow-y: hidden;
-    padding-inline: 2vw;
-    box-shadow: -5px 0px 10px 10px rgba(12, 12, 12, 0.187);
-    border-left: 0.5px solid rgb(41, 41, 41);
-
-    ul {
-      padding-bottom: 10vw;
-      margin-bottom: 5vw;
-      max-height: 80vh;
-      overflow-y: auto;
-      scrollbar-width: none;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 3vw;
-
-      div {
-        margin-top: 1vw;
-        display: flex;
-        gap: 2vw;
-
-        .pronto {
-          background-color: rgb(0, 71, 13);
-          border: none;
-          color: white;
-          font-size: 1.1vw;
-          padding: 0.5vw 0.8vw;
-          border-radius: 14px;
-          display: flex;
-          justify-content: center;
-          transition: 0.1s ease all;
-          align-items: center;
-        }
-
-        .pronto:hover {
-          cursor: pointer;
-          background-color: rgb(0, 41, 7);
-        }
-      }
-    }
-
-    .vazio {
-      font-size: 1.5vw;
-      position: absolute;
-      top: 50%;
-      right: 50%;
-      transform: translate(50%, -50%);
-    }
-
-    h2.listaPrincipalAll {
-      font-size: 2vw;
-      text-align: center;
-      padding: 2vw 0 2vw 0;
-
-      button {
-        border: none;
-        background-color: #3b0000;
-        color: white;
-        font-size: 1.5vw;
-        padding: 0.5vw 0.8vw;
-        border-radius: 20px;
-      }
-
-      button:hover {
-        background-color: #1f0000;
-        cursor: pointer;
-      }
-    }
-
-    li {
-      border: 2px solid rgb(38, 38, 38);
-      padding: 2vw 2vw;
-      width: 85%;
-      border-radius: 24px;
-      position: relative;
-
-      .principalConcluida {
-        width: 100%;
-        border-bottom: 1px solid white;
-        padding-bottom: 1vw;
-        margin-bottom: 1vw;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-
-        h4 {
-          font-size: 2vw;
-          word-wrap: break-word;
-
-        }
-
-        p {
-          width: fit-content;
-
-          span {
-            border-radius: 12px;
-            padding: 0.3vw 0.6vw;
-          }
-        }
-      }
-
-      p {
-        text-align: left;
-        padding: 0 0.5vw;
-        width: 100%;
-        color: rgb(154, 154, 154);
-        font-size: 1.2vw;
-      }
-
-      .datas {
-        display: flex;
-        justify-content: space-between;
-        border-top: 0.5px solid white;
-        padding-top: 1vw;
-        margin-top: 1vw;
-        margin-bottom: 2vw;
-        font-size: 1.3vw;
-
-        .dataInicio {
-          text-align: center;
-          background-color: rgb(85, 85, 85);
-          color: white;
-          padding: 0.7vw;
-          border-radius: 24px;
-        }
-
-        .dataFinal {
-          text-align: center;
-          background-color: rgb(85, 85, 85);
-          color: white;
-          padding: 0.7vw;
-          border-radius: 24px;
-        }
-      }
     }
   }
 }
