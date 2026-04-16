@@ -1,5 +1,5 @@
 <script setup>
-import LeftPart from '@/components/leftPart.vue'
+import LeftPart from '@/components/LeftPart.vue'
 import MiddlePart from '@/components/MiddlePart.vue'
 import RightPart from '@/components/RightPart.vue'
 import { ref, onMounted, onUnmounted, computed } from 'vue';
@@ -221,10 +221,7 @@ onUnmounted(() => {
   <main style="display: flex; justify-content: space-around;">
 <LeftPart
   :tarefaEditada="tarefaEditada"
-  :filtro="filtro"
-  @salvar="registrar"
-  @update:filtro="filtro = $event"
-/>
+  :filtro="filtro" @salvar="registrar" @update:filtro="filtro = $event"/>
     <div class="deleteAllComplete" v-if="delCom_section">
       <p>Deseja mesmo limpar todas as tarefas concluídas?</p>
       <div>
