@@ -5,6 +5,10 @@
   const produtos = ref(listaProdutos);
   produtos.value = produtos.value.filter(p =>
     p.categoria === 'Brinquedos');
+    function atualizarpreco(id, novopreco) {
+     const posicao = produtos.value.findIndex(p => p.id === id);
+     produtos.value[posicao].preco = novopreco;
+    }
 </script>
 
 <template>
@@ -12,7 +16,14 @@
     <h1>Brinquedos</h1>
     <div class="produtos">
       <ProdutoCard v-for="produto in produtos" :key="produto.id"
-        class="produto-card" :id="produto.id" :nome="produto.nome" :preco="produto.preco" :imagem="produto.imagem" :categoria="produto.categoria">
+        class="produto-card"
+         :id="produto.id"
+         :nome="produto.nome"
+         :preco="produto.preco"
+         :imagem="produto.imagem"
+         :categoria="produto.categoria"
+          @atualizarpreco="atualizarpreco"
+         >
       </ProdutoCard>
     </div>
   </div>

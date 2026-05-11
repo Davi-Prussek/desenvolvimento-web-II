@@ -12,22 +12,22 @@ const routes = [
   {
     path: "/alimentos",
     component: AlimentosView,
-    name: "alimentos"
+    name: "Alimentos"
   },
   {
     path: "/brinquedos",
     component: () => import('@/views/brinquedosView.vue'),
-    name: "brinquedos"
+    name: "Brinquedos"
   },
   {
     path: "/higiene",
     component: () => import('@/views/HigieneView.vue'),
-    name: "higiene"
+    name: "Higiene"
   },
   {
     path: "/acessorios",
     component: () => import('@/views/AcessóriosView.vue'),
-    name: "acessorios"
+    name: "Acessórios"
   },
 ]
 

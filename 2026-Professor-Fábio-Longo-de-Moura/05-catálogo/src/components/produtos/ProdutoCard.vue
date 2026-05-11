@@ -23,7 +23,7 @@
     </div>
     <ButtonChild @clique="mostrarDialog = true">Editar</ButtonChild>
     <ProdutoDialog v-if="mostrarDialog" :nome="nome" :id="id"
-      :preco="preco" :categoria="categoria" @fechar="mostrarDialog = false"/>
+      :preco="preco" :categoria="categoria" @fechar="mostrarDialog = false" @corrigirpreco="corrigirPreco"/>
   </div>
 </template>
 

@@ -1,10 +1,10 @@
 <script setup>
 import { ref } from 'vue'
-defineProps(['nome', 'id', 'preco', 'categoria']);
+const props = defineProps(['nome', 'id', 'preco', 'categoria']);
 defineEmits(['corrigirpreco', 'fechar'])
 import ButtonChild from '../ButtonChild.vue';
 import { formataPreco } from '@/utils/produtoUtils';
-const novopreco = ref(0);
+const novopreco = ref(props.preco.toFixed(2))
 </script>
 <template>
   <div class="overlay">
@@ -13,7 +13,7 @@ const novopreco = ref(0);
       <p>Preço: {{ formataPreco(preco) }}</p>
       <p>Categoria: {{ categoria }}</p>
       <input type="number" v-model.number="novopreco">
-      <ButtonChild>Corrigir Preço</ButtonChild>
+      <ButtonChild @clique="$emit('corrigirpreco', id, novopreco )">Corrigir Preço</ButtonChild>
       <ButtonChild @clique="$emit('fechar')">Cancelar</ButtonChild>
     </div>
   </div>
@@ -23,6 +23,7 @@ const novopreco = ref(0);
   border: 1px solid #ccc;
   padding: 16px;
   margin-top: 16px;
+  background-color: rgb(0,0,0);
 }
 .overlay {
   position: fixed;
