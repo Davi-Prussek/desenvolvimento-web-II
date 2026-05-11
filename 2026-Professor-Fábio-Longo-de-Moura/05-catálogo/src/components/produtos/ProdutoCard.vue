@@ -1,22 +1,30 @@
 <script setup>
-/* import { ref } from 'vue'; */
-defineProps(['id', 'nome', 'preco', 'imagem', 'categoria'])
-import ButtonChild from '../ButtonChild.vue';
-import { formataPreco } from '@/utils/produtoUtils';
-
+  import { ref } from 'vue';
+  const mostrarDialog = ref(false);
+  defineProps(['id', 'nome', 'preco', 'imagem', 'categoria']);
+  const emit = defineEmits(['atualizarpreco']);
+  import ButtonChild from '../ButtonChild.vue';
+  import ProdutoDialog from './ProdutoDialog.vue';
+  import { formataPreco } from '@/utils/produtoUtils';
+  function corrigirPreco(id, preco) {
+    emit('atualizarpreco', id, preco);
+    mostrarDialog.value = false;
+  }
 </script>
 
 <template>
-<div class="produto-card">
-  <div>
-    <h2> {{ nome }}</h2>
-    <p>Preço: R$ {{ formataPreco(preco) }}</p>
+  <div class="produto-card">
+    <div>
+      <h2>{{ nome }}</h2>
+      <p>Preço: {{ formataPreco(preco) }}</p>
+    </div>
+    <div>
+      <img :src="imagem" class="produto-imagem" />
+    </div>
+    <ButtonChild @clique="mostrarDialog = true">Editar</ButtonChild>
+    <ProdutoDialog v-if="mostrarDialog" :nome="nome" :id="id"
+      :preco="preco" :categoria="categoria" @fechar="mostrarDialog = false"/>
   </div>
-  <img :src="imagem" class="produto-imagem">
-  <div class="bonitin">
-    <ButtonChild>Editar</ButtonChild>
-  </div>
-</div>
 </template>
 
 <style scoped>
