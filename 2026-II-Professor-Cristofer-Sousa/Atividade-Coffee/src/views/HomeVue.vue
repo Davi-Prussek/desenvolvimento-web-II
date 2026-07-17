@@ -10,9 +10,10 @@
 
 </script>
 <template>
-<BannerComponent/>
-    <div class="flex gap-[3vw]">
-      <!--7C3D03-->
+<div class="pt-[2vw] px-[2vw]">
+  <BannerComponent/>
+  <div class="flex gap-[3vw] hidden">
+    <!--7C3D03-->
       <CardComponent
       titulo="Total de cafés avaliados"
       :valor="total"
@@ -41,7 +42,8 @@
       :img="{
         src: 'relogio.png',
         alt: 'Relógio',
-        }"
+      }"
       />
     </div>
+  </div>
 </template>
