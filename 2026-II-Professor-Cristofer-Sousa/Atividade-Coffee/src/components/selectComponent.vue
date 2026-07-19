@@ -5,7 +5,7 @@
     </label>
 
     <select
-      class="text-[1.2vw] text-white border-[2px] border-[#dedede] rounded-md flex-1 p-[0.5vw]"
+      class="appearance-none text-[1.2vw] text-white border-2 border-[#dedede] rounded-md flex-1 p-[0.5vw]"
       :id="props.id"
       :value="props.modelValue ?? ''"
       @change="changeValue"

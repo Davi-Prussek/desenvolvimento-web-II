@@ -1,7 +1,6 @@
 import { defineStore } from "pinia"
 import { computed, ref } from "vue"
 import type { cafe } from "@/types/cafe"
-
 export const AcervoDeCafeStore = defineStore(
   'coffee',
   () => {

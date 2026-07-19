@@ -67,7 +67,7 @@
     <i class="fi fi-rr-clipboard-list"/>Ver avaliações
   </RouterLink>
     </div>
-    <div class="bg-[#F7F4F0] flex justify-between pt-[1vw] rounded-[20px] border-[1.6px] border-[#dedede] border-solid gap-[15vw]">
+    <div class="bg-[#F7F4F0] flex justify-between py-[1vw] rounded-[20px] border-[1.6px] border-[#dedede] border-solid gap-[15vw]">
        <div class="flex justify-center gap-[2vw] px-[3vw]">
         <i class="fi fi-rr-megaphone text-[#532a05] text-[3.5vw]"></i>
         <div>

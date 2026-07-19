@@ -2,7 +2,7 @@
 <div class="flex flex-col gap-[0.4vw]">
   <label class="text-[1.2vw] text-white" :for="props.id">{{ props.label }}</label>
 <input
-class="text-white border-[2px] border-[#dedede] border-solid rounded-md p-[0.5vw] px-[1vw] text-[1.2vw]"
+class="text-white border-2 border-[#dedede] border-solid rounded-md p-[0.5vw] px-[1vw] text-[1.2vw]"
 @input="emits('update:modelValue',($event.target as HTMLInputElement).value)"
 :type="props.type"
 :placeholder="props.placeholder"

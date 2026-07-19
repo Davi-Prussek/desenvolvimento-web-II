@@ -1,6 +1,10 @@
 export interface avaliacao {
-  nome_avaliador: string
+  nome_cafe_avaliado: string
   data_avaliacao: Date
-  media: number
+  aroma: number
+  sabor: number
+  acidez: number
+  corpo: number
+  finalização: number
   comentario: string
 }

@@ -1,3 +1,4 @@
+import type { avaliacao } from "@/types/avaliacao"
 export type form = string | null
 export type notaTipos = string | number
 
@@ -14,4 +15,5 @@ export interface cafe {
   acidez: number
   corpo: number
   finalização: number
+  avaliacoes: avaliacao[]
 }

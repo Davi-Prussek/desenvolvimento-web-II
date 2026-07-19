@@ -19,3 +19,38 @@
 **[Desenvolvimento Web III](https://github.com/marrcandre/django-drf-tutorial) :arrow_right: [Professor: Marco André Lopes Mendes](https://github.com/marrcandre/)**
 
 > _Desenvolvimento back-end usando framework Django_
+
+views/
+     |Home/
+     |     |
+     |     |banner/
+     |     |      |mobile
+     |     |      |desktop
+     |     |      |index.ts
+     |     |
+     |     |cards/
+     |     |     |mobile
+     |     |     |desktop
+     |     |     |index.ts
+     |     |
+     |     |graph/
+     |     |     |mobile
+     |     |     |desktop
+     |     |     |index.ts
+     |
+     |Home/
+          |
+          |banner/
+          |      |mobile
+          |      |desktop
+          |      |index.ts
+          |
+          |cards/
+          |     |mobile
+          |     |desktop
+          |     |index.ts
+          |
+          |graph/
+          |     |mobile
+          |     |desktop
+          |     |index.ts
