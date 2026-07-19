@@ -1,6 +1,7 @@
 import { defineStore } from "pinia"
 import { ref,computed } from "vue"
 
+
 interface avaliacao {
   nome_avaliador: string
   data_avaliacao: Date
@@ -14,10 +15,13 @@ export const avaliacaoStore = defineStore('avaliacao', () => {
   return avaliacoes.value.length
 })
 const ultimaAvaliacao = computed(() => {
-  
+
 })
   return {
     avaliacoes,
     total,
   }
+},
+{
+  persist: true
 })

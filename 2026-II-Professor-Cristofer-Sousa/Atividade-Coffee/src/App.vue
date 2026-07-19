@@ -4,7 +4,7 @@
 
 </script>
 <template>
-<div class="mt-[1vw] mx-[2vw] py-[2vw] border-[1.5px] border-[#dedede] border-solid bg-white">
+<div class="my-[1vw] mx-[2vw] pt-[2vw] border-[2px] border-[#dedede] border-solid bg-white rounded-xl">
     <NavBarComponent/>
   <RouterView>
 </RouterView>

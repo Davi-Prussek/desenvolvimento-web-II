@@ -22,6 +22,14 @@ const router = createRouter({
       }
     },
     {
+      path: '/AddCoffee',
+      name: 'Adicionar Café',
+      component: () => import('../views/AddCoffeeVue.vue'),
+      meta: {
+        icon: 'fi fi-rr-coffee'
+      }
+    },
+    {
       path: '/ranking',
       name: 'Ranking',
       component: () => import('../views/RankingVue.vue'),

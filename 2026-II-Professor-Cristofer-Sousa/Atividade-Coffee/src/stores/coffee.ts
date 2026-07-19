@@ -1,17 +1,21 @@
-
 import { defineStore } from "pinia"
 import { computed, ref } from "vue"
 
+type form = string | null
 type notaTipos = string | number
 interface cafe {
-  nome: string
+  nome: form
+  produtor: form
+  caracteristicas: string
+  origem: form
+  processo: form
+  ponto_de_torra: form
   nota: notaTipos
-  produtor: string
-  aroma: string
-  sabor: string
-  acidez: string
-  corpo: string
-  finalização: string
+  aroma: number
+  sabor: number
+  acidez: number
+  corpo: number
+  finalização: number
 }
 export const AcervoDeCafeStore = defineStore(
   'coffee',

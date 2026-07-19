@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-[#F8F5F2] flex justify-center gap-[3vw] border-[3px] border-solid border-[#f0edea] rounded-xl  py-[2vw] px-[8vw]">
+  <div class="bg-[#F8F5F2] flex justify-center gap-[3vw] border-2 border-solid border-[#f0edea] rounded-xl  py-[2vw] px-[8vw]">
     <img src="../../public/images/coffee.png" alt="coffee/img">
     <div class="px-[8vw] text-center flex flex-col items-center gap-[1.2vw]">
       <h1 class="text-[2.6vw] font-bold leading-13">
