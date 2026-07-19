@@ -1,13 +1,6 @@
 import { defineStore } from "pinia"
 import { ref,computed } from "vue"
-
-
-interface avaliacao {
-  nome_avaliador: string
-  data_avaliacao: Date
-  media: number
-  comentario: string
-}
+import type { avaliacao } from "@/types/avaliacao"
 
 export const avaliacaoStore = defineStore('avaliacao', () => {
   const avaliacoes = ref<avaliacao[]>([])

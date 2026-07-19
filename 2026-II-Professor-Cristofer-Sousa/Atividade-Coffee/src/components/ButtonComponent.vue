@@ -1,7 +1,7 @@
 <template>
 <button class="
             bg-[#5e3007]
-            hover:bg-[#532a05]
+            hover:bg-[#472404]
             flex
             justify-center
             items-center
