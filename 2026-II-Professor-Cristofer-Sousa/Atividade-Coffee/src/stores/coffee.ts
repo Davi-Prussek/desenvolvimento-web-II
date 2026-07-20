@@ -1,18 +1,6 @@
-
 import { defineStore } from "pinia"
 import { computed, ref } from "vue"
-
-type notaTipos = string | number
-interface cafe {
-  nome: string
-  nota: notaTipos
-  produtor: string
-  aroma: string
-  sabor: string
-  acidez: string
-  corpo: string
-  finalização: string
-}
+import type { cafe } from "@/types/cafe"
 export const AcervoDeCafeStore = defineStore(
   'coffee',
   () => {
